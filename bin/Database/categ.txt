@@ -1,0 +1,62 @@
+/*
+WITH RECURSIVE category_path (id, title, parent_id, path) AS
+(
+  SELECT category_id, name, parent_id, name as path
+    FROM categories
+    WHERE category_id = 17 
+  UNION ALL
+  SELECT c.category_id, c.name, c.parent_id, CONCAT(cp.path, ' > ', c.name)
+    FROM category_path cp JOIN categories c
+      ON cp.parent_id = c.category_id
+)
+SELECT * FROM category_path;
+*/
+
+/*
+WITH RECURSIVE cat (category_id,name,parent_id,path) AS
+(
+  SELECT category_id, name, parent_id, name as path
+    FROM categories
+    WHERE category_id = 1 
+  UNION ALL
+  SELECT c.category_id, c.name, c.parent_id, CONCAT(cp.path, ' > ', c.name)
+    FROM cat cp JOIN categories c
+      ON cp.category_id = c.parent_id
+)
+SELECT * FROM cat;
+*/
+
+/*
+WITH RECURSIVE cat (category_id,name,parent_id,path) AS
+(
+  SELECT category_id, name, parent_id, name as path
+    FROM categories
+    WHERE category_id = 1 
+  UNION ALL
+  SELECT c.category_id, c.name, c.parent_id, CONCAT(cp.path, ' > ', c.name)
+    FROM cat cp JOIN categories c
+      ON cp.category_id = c.parent_id
+)
+SELECT * FROM cat;
+*/
+
+WITH RECURSIVE cat (category_id,name,parent_id,path) AS
+(
+  SELECT category_id, name, parent_id, name as path
+    FROM categories
+    WHERE category_id = 1 
+  UNION ALL
+  SELECT c.category_id, c.name, c.parent_id, CONCAT(cp.path, ' > ', c.name)
+    FROM cat cp JOIN categories c
+      ON cp.category_id = c.parent_id
+)
+
+SELECT * FROM products p
+JOIN (SELECT c.path,c.category_id FROM cat c LEFT JOIN categories c1
+	ON c.category_id = c1.parent_id
+	WHERE c1.category_id IS NULL) as d ON p.category_id = d.category_id
+WHERE p.category_id IN (
+	SELECT c.category_id FROM cat c LEFT JOIN categories c1
+	ON c.category_id = c1.parent_id
+	WHERE c1.category_id IS NULL
+) 

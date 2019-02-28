@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.vmzone.demo.dto;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,15 +9,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 public class RegisterDTO {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long user_id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long userId;
 
 	private String firstName;
   

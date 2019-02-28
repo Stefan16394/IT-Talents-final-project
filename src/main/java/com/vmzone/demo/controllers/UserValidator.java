@@ -1,10 +1,10 @@
-package com.example.demo.controllers;
+package com.vmzone.demo.controllers;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import com.example.demo.dto.LoginDTO;
-import com.example.demo.dto.RegisterDTO;
+import com.vmzone.demo.dto.LoginDTO;
+import com.vmzone.demo.dto.RegisterDTO;
 
 public class UserValidator implements Validator {
 
