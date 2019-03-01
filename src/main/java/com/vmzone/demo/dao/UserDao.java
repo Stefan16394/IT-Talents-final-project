@@ -1,4 +1,4 @@
-package com.example.demo.dao;
+package com.vmzone.demo.dao;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,18 +27,18 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
-import com.example.demo.controllers.UserValidator;
-import com.example.demo.dto.LoginDTO;
-import com.example.demo.dto.RegisterDTO;
-import com.example.demo.exceptions.ResourceAlreadyExistsException;
-import com.example.demo.exceptions.ResourceDoesntExistException;
-import com.example.demo.exceptions.BadCredentialsException;
-import com.example.demo.models.User;
+import com.vmzone.demo.controllers.UserValidator;
+import com.vmzone.demo.dto.LoginDTO;
+import com.vmzone.demo.dto.RegisterDTO;
+import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
+import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.User;
 
 @Component
 public class UserDao implements IUserDao {
 	private static final String FIND_USER_BY_EMAIL = "SELECT * FROM users u WHERE u.email = :email";
-	private static final String CREATE_NEW_USER = "INSERT INTO users (user_id,name,surname,email,password,gender,isAdmin,isSubscribed) VALUES(:user_id,:name,:surname,:email,:password,:gender,:isAdmin,:isSubscribed)";
+	private static final String CREATE_NEW_USER = "INSERT INTO users (user_id,name,surname,email,password,gender,is_admin,is_subscribed) VALUES(:user_id,:name,:surname,:email,:password,:gender,:is_admin,:is_subscribed)";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -55,11 +55,11 @@ public class UserDao implements IUserDao {
 		}
 		String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 
-		SqlParameterSource parameters = new MapSqlParameterSource().addValue("user_id", user.getUser_id())
+		SqlParameterSource parameters = new MapSqlParameterSource().addValue("user_id", user.getUserId())
 				.addValue("name", user.getFirstName()).addValue("surname", user.getLastName())
 				.addValue("email", user.getEmail()).addValue("password", hashedPassword)
-				.addValue("gender", user.getGender()).addValue("isAdmin", user.getIsAdmin())
-				.addValue("isSubscribed", user.getIsSubscribed());
+				.addValue("gender", user.getGender()).addValue("is_admin", user.getIsAdmin())
+				.addValue("is_subscribed", user.getIsSubscribed());
 
 		this.namedParameterJdbcTemplate.update(CREATE_NEW_USER, parameters);
 

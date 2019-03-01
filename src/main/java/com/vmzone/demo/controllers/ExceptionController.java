@@ -1,4 +1,4 @@
-package com.example.demo.controllers;
+package com.vmzone.demo.controllers;
 
 import java.io.IOException;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.demo.exceptions.BadCredentialsException;
-import com.example.demo.exceptions.VMZoneException;
+import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.VMZoneException;
 
 @ControllerAdvice
 public class ExceptionController {

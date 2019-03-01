@@ -1,4 +1,4 @@
-package com.example.demo.exceptions;
+package com.vmzone.demo.exceptions;
 
 import org.springframework.http.HttpStatus;
 
