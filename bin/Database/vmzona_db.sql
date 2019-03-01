@@ -24,14 +24,14 @@ CREATE TABLE IF NOT EXISTS `vmzona`.`users` (
   `email` VARCHAR(45) NOT NULL,
   `password` LONGTEXT NOT NULL,
   `gender` ENUM('Female', 'Male') NULL,
-  `is_admin` TINYINT NOT NULL,
-  `is_subscribed` TINYINT NOT NULL,
+  `isAdmin` TINYINT NOT NULL,
+  `isSubscribed` TINYINT NOT NULL,
   `phone` VARCHAR(45) NULL,
   `city` VARCHAR(45) NULL,
-  `post_code` VARCHAR(10) NULL,
+  `postCode` VARCHAR(10) NULL,
   `adress` VARCHAR(45) NULL,
   `age` INT NULL,
-  `is_deleted` TINYINT NOT NULL,
+  `isDeleted` TINYINT NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB;
@@ -42,13 +42,13 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `vmzona`.`products` (
   `product_id` INT NOT NULL AUTO_INCREMENT,
-  `title` VARCHAR(100) NOT NULL,
-  `information` VARCHAR(200) NOT NULL,
-  `in_stock` TINYINT NOT NULL,
+  `title` VARCHAR(200) NOT NULL,
+  `information` VARCHAR(1000) NOT NULL,
+  `inStock` TINYINT NOT NULL,
   `delivery` INT NOT NULL,
   `date` DATETIME NOT NULL,
   `quantity` INT UNSIGNED NOT NULL,
-  `is_deleted` TINYINT NOT NULL,
+  `isDeleted` TINYINT NOT NULL,
   `in_sale` TINYINT NOT NULL,
   `detailed_information` LONGTEXT NULL,
   PRIMARY KEY (`product_id`),
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `vmzona`.`orders` (
   `status_id` INT NOT NULL,
   `user_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  `is_deleted` TINYINT NOT NULL,
+  `isDeleted` TINYINT NOT NULL,
   PRIMARY KEY (`order_id`),
   INDEX `fk_orders_statuses1_idx` (`status_id` ASC) VISIBLE,
   INDEX `fk_orders_users1_idx` (`user_id` ASC) VISIBLE,
@@ -162,11 +162,11 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `vmzona`.`photos` (
   `photo_id` INT NOT NULL AUTO_INCREMENT,
   `photo_path` VARCHAR(45) NULL,
-  `product_id` INT NOT NULL,
+  `products_product_id` INT NOT NULL,
   PRIMARY KEY (`photo_id`),
-  INDEX `fk_photos_products1_idx` (`product_id` ASC) VISIBLE,
+  INDEX `fk_photos_products1_idx` (`products_product_id` ASC) VISIBLE,
   CONSTRAINT `fk_photos_products1`
-    FOREIGN KEY (`product_id`)
+    FOREIGN KEY (`products_product_id`)
     REFERENCES `vmzona`.`products` (`product_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `vmzona`.`in_sale` (
   `sale_id` INT NOT NULL AUTO_INCREMENT,
   `start_date` DATETIME NULL,
   `end_date` DATETIME NULL,
-  `discount_percentage` INT NULL,
+  `discount_percantage` INT NULL,
   `product_id` INT NOT NULL,
   PRIMARY KEY (`sale_id`),
   INDEX `fk_in_sale_products1_idx` (`product_id` ASC) VISIBLE,
