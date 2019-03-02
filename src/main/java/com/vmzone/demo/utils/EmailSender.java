@@ -2,6 +2,7 @@ package com.vmzone.demo.utils;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -30,8 +31,19 @@ public class EmailSender {
 		String newPass = EmailConstantsHelper.forgottenPassword();
 		sendEmail(email, EmailConstantsHelper.SUBJECT_FORGOTTEN_PASSWORD, newPass);
 		
-		
 		return newPass;
+	}
+	
+	public static void sendSubscripedPromotions(List<String> emails) throws AddressException, InvalidEmailException, MessagingException, IOException {
+		
+		for(String email : emails) {
+			sendEmail(email, EmailConstantsHelper.SUBJECT_PROMOTIONS, EmailConstantsHelper.subscribedPromotions());
+		}
+		
+	}
+	
+	public static void contactUs(String text) throws AddressException, InvalidEmailException, MessagingException, IOException {
+		sendEmail(EMAIL, EmailConstantsHelper.SUBJECT_CONTACT_US, text);
 	}
 	
 	

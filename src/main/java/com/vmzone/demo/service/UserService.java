@@ -2,6 +2,8 @@ package com.vmzone.demo.service;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -12,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.ChangePasswordDTO;
+import com.vmzone.demo.dto.ContactUsDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
@@ -22,6 +25,7 @@ import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.UserRepository;
 import com.vmzone.demo.utils.EmailSender;
+import com.vmzone.demo.utils.RegexValidator;
 
 @Service
 public class UserService {
@@ -99,6 +103,24 @@ public class UserService {
 		}
 		String hashedPassword = bCryptPasswordEncoder.encode(EmailSender.forgottenPassword(u.getEmail()));
 		u.setPassword(hashedPassword);
+	}
+	
+	public void sendSubscribed() throws AddressException, InvalidEmailException, MessagingException, IOException {
+		List<String> emails = this.userRepository.findAll()
+				.stream()
+				.filter(user -> user.getIsSubscribed() == 0)
+				.map(user -> user.getEmail())
+				.collect(Collectors.toList());
 		
+		EmailSender.sendSubscripedPromotions(emails);
+				
+	}
+	
+	public void contactUs(ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
+		if(!RegexValidator.validateEmail(contact.getEmail())) {
+			throw new InvalidEmailException(HttpStatus.UNAUTHORIZED, "Incorrect email or password");
+		} 
+		
+		EmailSender.contactUs(contact.toString());
 	}
 }

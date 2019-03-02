@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.vmzone.demo.dto.ChangePasswordDTO;
+import com.vmzone.demo.dto.ContactUsDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
@@ -61,7 +62,7 @@ public class UserController {
 	
 	@PostMapping("/editProfile/{id}")
 	public User editProfile(@PathVariable long id, @RequestBody @Valid EditProfileDTO user, HttpSession session) throws ResourceDoesntExistException {
-		if (session.getAttribute("userId") == null) {
+		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
 		
@@ -70,7 +71,7 @@ public class UserController {
 	
 	@PostMapping("/changePassword/{id}")
 	public void changePassword(@PathVariable long id, @RequestBody @Valid ChangePasswordDTO pass, HttpSession session) throws ResourceDoesntExistException {
-		if (session.getAttribute("userId") == null) {
+		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
 		
@@ -79,15 +80,30 @@ public class UserController {
 	
 	@PostMapping("/forgottenPassword")
 	public void forgottenPassword(@RequestParam("email") String email) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
-		//EmailSender.sendEmail("sabiha.djurina@abv.bg", "subject", "body");
+	
 		this.userService.forgottenPassword(email);
 	}
+	
+
+	@PostMapping("/sendSubscribed")
+	public void sendSubcribed() throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
+		
+		this.userService.sendSubscribed();
+	}
+	
+	@PostMapping("/contactUs")
+	public void contactUs(@RequestBody ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
+		
+		this.userService.contactUs(contact);
+	}
+	
+	
 	
 	@PostMapping("/logout")
 	public void logout(HttpServletRequest request) throws ResourceDoesntExistException {
 		HttpSession session = request.getSession();
 		
-		if (session.getAttribute("userId") == null) {
+		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
 		session.invalidate();
