@@ -97,7 +97,7 @@ public class UserService {
 		if (u == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
-		String hashedPassword = bCryptPasswordEncoder.encode(EmailSender.forgottenPassword(email));
+		String hashedPassword = bCryptPasswordEncoder.encode(EmailSender.forgottenPassword(u.getEmail()));
 		u.setPassword(hashedPassword);
 		
 	}

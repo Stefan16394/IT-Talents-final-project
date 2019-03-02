@@ -11,9 +11,13 @@ public class EmailConstantsHelper {
 		StringBuffer message = new StringBuffer();
 		message.append("Здравейте,");
 		message.append(System.lineSeparator());
-		message.append("по Ваше искане Ви изпращаме нова парола, която да замести старата Ви парола за сайта на Vmzona.");
+		message.append("по Ваше искане Ви изпращаме нова парола, която да замести старата Ви за сайта на Vmzona.");
+		message.append(System.lineSeparator());
 		message.append("Новата Ви парола е: ");
 		message.append(PasswordGenerator.makePassword(LENGTH_FOR_FORGOTTEN_PASSWORD));
+		message.append(System.lineSeparator());
+		message.append("Препоръваме Ви да я смените след като успешно влезете в профила си!");
+		message.append(System.lineSeparator());
 		message.append(System.lineSeparator());
 		message.append("Пожелаваме ви лек ден,");
 		message.append(System.lineSeparator());
