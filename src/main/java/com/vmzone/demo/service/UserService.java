@@ -14,7 +14,6 @@ import com.vmzone.demo.dto.RegisterDTO;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
-import com.vmzone.demo.models.Category;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.UserRepository;
 
@@ -51,9 +50,9 @@ public class UserService {
 		return user;
 	}
 	
-
 	public User editProfile(long id, EditProfileDTO user) throws ResourceDoesntExistException {
 		User u = this.userRepository.findById(id);
+		
 		if (u == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
@@ -76,9 +75,11 @@ public class UserService {
 	
 	public void changePassword(long id, ChangePasswordDTO pass) throws ResourceDoesntExistException {
 		User u = this.userRepository.findById(id);
+		
 		if (u == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
+		
 		String hashedPassword = bCryptPasswordEncoder.encode(pass.getPassword());
 		u.setPassword(hashedPassword);
 		System.out.println(bCryptPasswordEncoder.matches(pass.getPassword(), u.getPassword()));
