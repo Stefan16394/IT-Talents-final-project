@@ -10,5 +10,5 @@ import com.vmzone.demo.models.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findByEmail(String email);
 
-	void save(Category category);
+	User findById(long id);
 }

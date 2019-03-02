@@ -17,10 +17,11 @@ public class CategoryService {
 	@Autowired
 	public CategoryRepository categoryRepository;
 	
-	public List<Category> getAllMainCategories() {
-		List<Category> mainCategories = this.categoryRepository.findAll()
+	public List<ListCategory> getAllMainCategories() {
+		List<ListCategory> mainCategories = this.categoryRepository.findAll()
 				.stream()
 				.filter(c->c.getParent() == null)
+				.map(c->this.getCategoryById(c.getCategoryId()))
 				.collect(Collectors.toList());
 
 		return mainCategories;
