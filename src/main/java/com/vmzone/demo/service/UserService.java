@@ -12,6 +12,7 @@ import com.vmzone.demo.dto.RegisterDTO;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.Category;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.UserRepository;
 
@@ -46,5 +47,9 @@ public class UserService {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "Incorrect email or password");
 		}
 		return user;
+	}
+	
+	public void createCategory(Category category) {
+		this.userRepository.save(category);
 	}
 }

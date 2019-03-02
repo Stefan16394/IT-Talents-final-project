@@ -1,12 +1,10 @@
 package com.vmzone.demo.controllers;
 
-import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.VMZoneException;
 
 @ControllerAdvice
