@@ -10,9 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AddCategoryDTO {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long category_id;
 	private String name;
 	private Long parent_id;
 }
