@@ -1,6 +1,10 @@
 package com.vmzone.demo.service;
 
+import java.io.IOException;
 import java.sql.SQLException;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +16,12 @@ import com.vmzone.demo.dto.EditProfileDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
 import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.InvalidEmailException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.UserRepository;
+import com.vmzone.demo.utils.EmailSender;
 
 @Service
 public class UserService {
@@ -82,6 +88,17 @@ public class UserService {
 		
 		String hashedPassword = bCryptPasswordEncoder.encode(pass.getPassword());
 		u.setPassword(hashedPassword);
-		System.out.println(bCryptPasswordEncoder.matches(pass.getPassword(), u.getPassword()));
+		//System.out.println(bCryptPasswordEncoder.matches(pass.getPassword(), u.getPassword()));
+	}
+	
+	public void forgottenPassword(String email) throws ResourceDoesntExistException, AddressException, InvalidEmailException, MessagingException, IOException {
+		User u = this.userRepository.findByEmail(email);
+		
+		if (u == null) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
+		}
+		String hashedPassword = bCryptPasswordEncoder.encode(EmailSender.forgottenPassword(email));
+		u.setPassword(hashedPassword);
+		
 	}
 }

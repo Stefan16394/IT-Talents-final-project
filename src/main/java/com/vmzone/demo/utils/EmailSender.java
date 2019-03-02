@@ -19,11 +19,21 @@ import javax.mail.internet.MimeMultipart;
 import org.springframework.http.HttpStatus;
 
 import com.vmzone.demo.exceptions.InvalidEmailException;
+import com.vmzone.demo.models.User;
 
 public class EmailSender {
 	
 	public static final String EMAIL = "vmzona.noreply@gmail.com";
 	private static final String PASS = "vmzona123456";
+	
+	public static String forgottenPassword(String email) throws AddressException, InvalidEmailException, MessagingException, IOException {
+		String newPass = EmailConstantsHelper.forgottenPassword();
+		sendEmail(email, EmailConstantsHelper.SUBJECT_FORGOTTEN_PASSWORD, newPass);
+		
+		
+		return newPass;
+	}
+	
 	
 	public static void sendEmail(String receiver, String subject, String bodyText) throws AddressException, MessagingException, IOException, InvalidEmailException {
 		   Properties props = new Properties();

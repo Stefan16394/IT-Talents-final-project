@@ -77,9 +77,10 @@ public class UserController {
 		this.userService.changePassword(id, pass);
 	}
 	
-	@PostMapping("/sendEmail")
-	public void forgotPassword() throws AddressException, MessagingException, IOException, InvalidEmailException {
-		EmailSender.sendEmail("sabiha.djurina@abv.bg", "subject", "body");
+	@PostMapping("/forgottenPassword")
+	public void forgottenPassword(@RequestParam("email") String email) throws AddressException, MessagingException, IOException, InvalidEmailException, ResourceDoesntExistException {
+		//EmailSender.sendEmail("sabiha.djurina@abv.bg", "subject", "body");
+		this.userService.forgottenPassword(email);
 	}
 	
 	@PostMapping("/logout")
