@@ -35,8 +35,8 @@ public class CategoryService {
 	}
 
 	public void createCategory(AddCategoryDTO category) {
-		Category newCategory = new Category(category.getCategory_id(), category.getName(),
-				this.categoryRepository.findById(category.getParent_id()).get());
+		Category newCategory = new Category(category.getName(), category.getParent_id() == null ? null
+				: this.categoryRepository.findById(category.getParent_id()).get());
 		this.categoryRepository.save(newCategory);
 	}
 

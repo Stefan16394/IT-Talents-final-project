@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.vmzone.demo.dto.ListSubCategory;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +26,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
 public class Category {
 	@Id
@@ -39,13 +39,12 @@ public class Category {
 	@JoinColumn(name = "parent_id")
 	private Category parent;
 	
-//	public Category(Long categoryId, String name, Category parent) {
-//		super();
-//		this.categoryId = categoryId;
-//		this.name = name;
-//		this.parent = parent;
-//	}
-
+	public Category(String name, Category parent) {
+		super();
+		this.name = name;
+		this.parent = parent;
+	}
+//
 //	@OneToMany(mappedBy = "parent")
 //	@JsonIgnoreProperties("parent")
 //	private List<Category> subCategories;
