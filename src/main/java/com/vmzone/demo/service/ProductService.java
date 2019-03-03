@@ -11,6 +11,8 @@ import com.vmzone.demo.dto.EditProductDTO;
 import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.models.Category;
+import com.vmzone.demo.dto.ListSubCategory;
+import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.models.Product;
 import com.vmzone.demo.repository.CategoryRepository;
 import com.vmzone.demo.repository.ProductRepository;
@@ -47,12 +49,30 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 	
+	public ListProduct getAllInfoForProduct(long id) throws BadCredentialsException {
+		Product p = this.productRepository.findById(id).get();
+		if(p == null) {
+			throw new BadCredentialsException();
+		}
+		List<ListReview> reviews = getReviewsForProduct(id);
+		
+		ListProduct info = new ListProduct(p.getProductId(), p.getTitle(), p.getInformation(), p.getInStock(), p.getDelivery(), p.getDetailedInformation());
+		info.fillReviews(reviews);
+		
+		return info;
+		
+	}
 	public List<ListProduct> getAllproducts(){
 		return this.productRepository.findAll().stream()
 				.filter(product -> product.getProductId() != null)
-				.map(product -> new ListProduct(product.getProductId(),
-						product.getTitle(),
-						product.getInformation()))
+				.map(product -> {
+					try {
+						return getAllInfoForProduct(product.getProductId());
+					} catch (BadCredentialsException e) {
+						e.printStackTrace();
+					}
+					return null;
+				})
 				.collect(Collectors.toList());
 	}
 

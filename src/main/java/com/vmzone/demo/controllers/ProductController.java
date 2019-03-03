@@ -14,7 +14,7 @@ import com.vmzone.demo.dto.AddProductDTO;
 import com.vmzone.demo.dto.EditProductDTO;
 import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListReview;
-import com.vmzone.demo.models.Product;
+import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.service.ProductService;
 
 @RestController
@@ -43,15 +43,15 @@ public class ProductController {
 			this.productService.editProduct(id,product);
 	}
 	
-	@GetMapping("product/{id}")
-	public Product getProductById(@PathVariable long id) {
-		return this.productService.getProductById(id);
-	}
 	
 	@GetMapping("/products/{id}")
 	public List<ListReview> getReviewsForAProduct(@PathVariable long id) {
 		return this.productService.getReviewsForProduct(id);
 	}
-	
-	
+
+	@GetMapping("/info/{id}")
+	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
+		return this.productService.getAllInfoForProduct(id);
+	}
+		
 }
