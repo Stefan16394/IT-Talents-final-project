@@ -1,5 +1,6 @@
 package com.vmzone.demo.dto;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class ListProduct {
 	private int inStock;
 	private int delivery;
 	private String detailedInformation;
+	private Double rating;
 	
 	private List<ListReview> reviews;
 
@@ -34,6 +36,10 @@ public class ListProduct {
 			this.reviews = new LinkedList<ListReview>(reviews);
 		}
 		
+	}
+	
+	public List<ListReview> getReviews(){
+		return Collections.unmodifiableList(this.reviews);
 	}
 	
 

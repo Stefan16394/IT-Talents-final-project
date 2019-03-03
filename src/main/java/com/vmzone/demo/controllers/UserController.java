@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.vmzone.demo.dto.ChangePasswordDTO;
 import com.vmzone.demo.dto.ContactUsDTO;
+import com.vmzone.demo.dto.EditProductDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
@@ -93,8 +94,12 @@ public class UserController {
 	
 	@PostMapping("/contactUs")
 	public void contactUs(@RequestBody ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
-		
 		this.userService.contactUs(contact);
+	}
+	
+	@PutMapping("/user/remove/{id}")
+	public void removeUser(@PathVariable long id) throws ResourceDoesntExistException {
+		 this.userService.removeUserById(id);
 	}
 	
 	

@@ -117,6 +117,15 @@ public class UserService {
 				
 	}
 	
+	public void removeUserById(long id) throws ResourceDoesntExistException {
+		User user = this.userRepository.findById(id);
+		if(user == null) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
+		}
+		user.setIsDeleted(1);
+		this.userRepository.save(user);
+		
+	}
 	
 	
 	public void contactUs(ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {

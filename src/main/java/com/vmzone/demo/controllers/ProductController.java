@@ -15,6 +15,7 @@ import com.vmzone.demo.dto.EditProductDTO;
 import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.service.ProductService;
 
 @RestController
@@ -33,13 +34,18 @@ public class ProductController {
 		return this.productService.getAllproducts();
 	}
 	
+	@GetMapping("/productsQuantity")
+	public List<ListProduct> getAllProductsWithSmallQuantity() {
+		return this.productService.getAllProductsWithSmallQuantity();
+	}
+	
 	@PutMapping("/product/remove/{id}")
-	public void removeProduct(@PathVariable long id) {
+	public void removeProduct(@PathVariable long id) throws ResourceDoesntExistException {
 		 this.productService.removeProductById(id);
 	}
 	
 	@PutMapping("/product/edit/{id}")
-	public void editProduct(@PathVariable long id,@RequestBody EditProductDTO product) {
+	public void editProduct(@PathVariable long id,@RequestBody EditProductDTO product) throws ResourceDoesntExistException {
 			this.productService.editProduct(id,product);
 	}
 	
@@ -52,6 +58,11 @@ public class ProductController {
 	@GetMapping("/info/{id}")
 	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
 		return this.productService.getAllInfoForProduct(id);
+	}
+	
+	@PostMapping("/calculate")
+	public void calculateRating() throws ResourceDoesntExistException {
+		this.productService.calculateRating();
 	}
 		
 }

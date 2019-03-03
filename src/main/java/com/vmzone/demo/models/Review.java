@@ -39,6 +39,7 @@ public class Review {
 	private String review;
 	private int rating;
 	private LocalDateTime date;
+	private int isDeleted;
 	
 	public Review(Product product, User user, String review, int rating) {
 		super();
