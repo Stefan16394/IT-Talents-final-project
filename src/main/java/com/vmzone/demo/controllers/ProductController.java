@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vmzone.demo.dto.AddProductDTO;
 import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListReview;
+import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.service.ProductService;
 
 @RestController
@@ -33,4 +34,11 @@ public class ProductController {
 	public List<ListReview> getReviewsForAProduct(@PathVariable long id) {
 		return this.productService.getReviewsForProduct(id);
 	}
+	
+	@GetMapping("/info/{id}")
+	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
+		return this.productService.getAllInfoForProduct(id);
+	}
+	
+	
 }
