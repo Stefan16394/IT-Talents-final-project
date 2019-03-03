@@ -22,7 +22,9 @@ public class ProductService {
 		Product newProduct = new Product(
 				this.categoryRepository.findById(product.getCategoryId()).get(),
 				product.getTitle(),product.getInformation(),product.getInStock(),
-				product.getDelivery(),product.getDate(),product.getQuantity(),
+				product.getDelivery(),
+				product.getDate(),
+				product.getQuantity(),
 				product.getInSale(),product.getDetailedInformation()
 				);
 		this.productRepository.save(newProduct);
