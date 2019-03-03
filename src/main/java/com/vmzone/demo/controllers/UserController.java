@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +32,6 @@ import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.UserService;
-import com.vmzone.demo.utils.EmailSender;
 
 @RestController
 public class UserController {
@@ -60,7 +59,7 @@ public class UserController {
 
 	}
 	
-	@PostMapping("/editProfile/{id}")
+	@PutMapping("/editProfile/{id}")
 	public User editProfile(@PathVariable long id, @RequestBody @Valid EditProfileDTO user, HttpSession session) throws ResourceDoesntExistException {
 		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
@@ -90,7 +89,6 @@ public class UserController {
 		
 		this.userService.sendSubscribed();
 	}
-	
 	
 	
 	@PostMapping("/contactUs")

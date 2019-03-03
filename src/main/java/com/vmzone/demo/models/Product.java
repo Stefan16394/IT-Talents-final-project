@@ -41,14 +41,14 @@ public class Product {
 	private String detailedInformation;
 
 	public Product(Category category, String title, String information, int inStock, int delivery,
-			LocalDateTime date, int quantity, int inSale, String detailedInformation) {
+			 int quantity, int inSale, String detailedInformation) {
 		super();
 		this.category = category;
 		this.title = title;
 		this.information = information;
 		this.inStock = inStock;
 		this.delivery = delivery;
-		this.date = date;
+		this.date = LocalDateTime.now();
 		this.quantity = quantity;
 		this.inSale = inSale;
 		this.detailedInformation = detailedInformation;

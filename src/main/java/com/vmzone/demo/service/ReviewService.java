@@ -21,8 +21,6 @@ public class ReviewService {
 	@Autowired
 	private ProductRepository productRepository;
 	
-	
-	
 	public void addReview(AddReviewDTO review ) {
 		System.out.println(review);
 		Review newReview = new Review(
