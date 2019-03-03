@@ -34,6 +34,12 @@ public class EmailSender {
 		return newPass;
 	}
 	
+	public static void registration(String email) throws AddressException, InvalidEmailException, MessagingException, IOException {
+		
+		sendEmail(email, EmailConstantsHelper.SUBJECT_WELCOME, EmailConstantsHelper.registration());
+		
+	}
+	
 	public static void sendSubscripedPromotions(List<String> emails) throws AddressException, InvalidEmailException, MessagingException, IOException {
 		
 		for(String email : emails) {

@@ -6,6 +6,7 @@ public class EmailConstantsHelper {
 	final static String SUBJECT_FORGOTTEN_PASSWORD = "Vmzona - Забравена парола";
 	final static String SUBJECT_PROMOTIONS = "Vmzona - Промоция на седмицата!";
 	final static String SUBJECT_CONTACT_US = "Запитване от потребител";
+	final static String SUBJECT_WELCOME = "Добре дошли във vmzona!";
 	
 
 	public static String forgottenPassword(){
@@ -35,6 +36,21 @@ public class EmailConstantsHelper {
 		//TODO get all products with promotions
 		message.append(System.lineSeparator());
 		message.append("Пожелаваме ви лек ден,");
+		message.append(System.lineSeparator());
+		message.append("екипът на Vmzona!");
+		return message.toString();
+	}
+	
+	public static String registration(){
+		StringBuffer message = new StringBuffer();
+		message.append("Здравейте,");
+		message.append(System.lineSeparator());
+		message.append("Вашата регистрация във Vmzona е успешна!");
+		message.append(System.lineSeparator());
+		message.append("Пожелаваме Ви приятно пазаруване!");
+		message.append(System.lineSeparator());
+		message.append(System.lineSeparator());
+		message.append("Приятен ден,");
 		message.append(System.lineSeparator());
 		message.append("екипът на Vmzona!");
 		return message.toString();

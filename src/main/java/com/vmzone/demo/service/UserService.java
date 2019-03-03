@@ -35,7 +35,7 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
 
-	public void register(RegisterDTO user) throws SQLException, ResourceAlreadyExistsException {
+	public void register(RegisterDTO user) throws SQLException, ResourceAlreadyExistsException, AddressException, InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(user.getEmail());
 		if (u != null) {
 			throw new ResourceAlreadyExistsException(HttpStatus.CONFLICT,
@@ -46,6 +46,7 @@ public class UserService {
 		User newUser = new User(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(), hashedPassword,
 				user.getGender(), user.getIsAdmin(), user.getIsSubscribed(), null, null, null, null, 0, 0);
 		this.userRepository.save(newUser);
+		EmailSender.registration(user.getEmail());
 	}
 
 	public User login(LoginDTO loginDTO) throws ResourceDoesntExistException, BadCredentialsException {
@@ -115,6 +116,8 @@ public class UserService {
 		EmailSender.sendSubscripedPromotions(emails);
 				
 	}
+	
+	
 	
 	public void contactUs(ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
 		if(!RegexValidator.validateEmail(contact.getEmail())) {

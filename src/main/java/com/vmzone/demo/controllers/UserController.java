@@ -40,7 +40,7 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/user/register")
-	public void registerUser(@RequestBody @Valid  RegisterDTO user, BindingResult result) throws ResourceAlreadyExistsException, SQLException {
+	public void registerUser(@RequestBody @Valid  RegisterDTO user, BindingResult result) throws ResourceAlreadyExistsException, SQLException, AddressException, InvalidEmailException, MessagingException, IOException {
 		UserValidator userValidator = new UserValidator();
 		userValidator.validate(user, result);
 
@@ -90,6 +90,8 @@ public class UserController {
 		
 		this.userService.sendSubscribed();
 	}
+	
+	
 	
 	@PostMapping("/contactUs")
 	public void contactUs(@RequestBody ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
