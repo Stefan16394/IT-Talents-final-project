@@ -132,31 +132,45 @@ public class ProductService {
 
 	}
 	
+	public List<ListProduct> getAllproducts(){
+		return this.productRepository.findAll().stream()
+				.filter(product -> product.getProductId() != null)
+				.map(product -> {
+					try {
+						return getAllInfoForProduct(product.getProductId());
+					} catch (BadCredentialsException e) {
+						e.printStackTrace();
+					}
+					return null;
+				})
+				.collect(Collectors.toList());
+	}
+	
 	
 	//TODO possibly a thread
-//	public void calculateRating() throws ResourceDoesntExistException {
-//		List<ListProduct> products = getAllproducts();
-//		
-//		if(products.isEmpty()) {
-//			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "There are no products");
-//		}
-//		
-//		for(ListProduct p : products) {
-//			List<ListReview> reviews = getReviewsForProduct(p.getId());
-//			p.fillReviews(reviews);
-//			Product prod = this.productRepository.findById(p.getId()).get();
-//			if(reviews.isEmpty()) {
-//				prod.setRating(Double.valueOf(0));
-//			} else {
-//				int sum = 0;
-//				for(ListReview r : reviews) {
-//					sum += r.getRating();
-//				}
-//				Double average = (double) (sum / reviews.size());
-//				prod.setRating(average);
-//			}
-//			this.productRepository.save(prod);
-//		}
-//		
-//	}
+	public void calculateRating() throws ResourceDoesntExistException {
+		List<ListProduct> products = getAllproducts();
+		
+		if(products.isEmpty()) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "There are no products");
+		}
+		
+		for(ListProduct p : products) {
+			List<ListReview> reviews = getReviewsForProduct(p.getId());
+			p.fillReviews(reviews);
+			Product prod = this.productRepository.findById(p.getId()).get();
+			if(reviews.isEmpty()) {
+				prod.setRating(Double.valueOf(0));
+			} else {
+				int sum = 0;
+				for(ListReview r : reviews) {
+					sum += r.getRating();
+				}
+				Double average = (double) (sum / reviews.size());
+				prod.setRating(average);
+			}
+			this.productRepository.save(prod);
+		}
+		
+	}
 }

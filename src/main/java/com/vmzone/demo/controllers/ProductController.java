@@ -55,15 +55,19 @@ public class ProductController {
 	public List<ListReview> getReviewsForAProduct(@PathVariable long id) {
 		return this.productService.getReviewsForProduct(id);
 	}
+	@GetMapping("/products")
+	public List<ListProduct> getAllproducts() {
+		return this.productService.getAllproducts();
+	}
 
 	@GetMapping("/info/{id}")
 	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
 		return this.productService.getAllInfoForProduct(id);
 	}
 
-//	@PostMapping("/calculate")
-//	public void calculateRating() throws ResourceDoesntExistException {
-//		this.productService.calculateRating();
-//	}
+	@PostMapping("/calculate")
+	public void calculateRating() throws ResourceDoesntExistException {
+		this.productService.calculateRating();
+	}
 		
 }

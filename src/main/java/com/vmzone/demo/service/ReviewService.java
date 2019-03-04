@@ -36,7 +36,7 @@ public class ReviewService {
 	}
 	
 	public void removeReviewById(long id) throws ResourceDoesntExistException {
-		Review review = this.reviewRepository.findById(id).get();
+		Review review = this.reviewRepository.findById(id);
 		if(review == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist");
 		}
@@ -45,7 +45,7 @@ public class ReviewService {
 	}
 	
 	public void editReview(long id, EditReviewDTO editedReview) throws ResourceDoesntExistException {
-		Review review = this.reviewRepository.findById(id).get();
+		Review review = this.reviewRepository.findById(id);
 		if(review == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist");
 		}
