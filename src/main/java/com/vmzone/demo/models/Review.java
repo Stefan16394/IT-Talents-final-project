@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,6 +38,7 @@ public class Review {
 	private String review;
 	private int rating;
 	private LocalDateTime date;
+	private int isDeleted;
 	
 	public Review(Product product, User user, String review, int rating) {
 		super();

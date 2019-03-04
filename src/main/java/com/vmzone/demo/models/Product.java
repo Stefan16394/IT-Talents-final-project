@@ -39,6 +39,9 @@ public class Product {
 	private int isDeleted;
 	private int inSale;
 	private String detailedInformation;
+	private Double rating;
+	
+	
 
 	public Product(Category category, String title, String information, int inStock, int delivery,
 			 int quantity, int inSale, String detailedInformation) {

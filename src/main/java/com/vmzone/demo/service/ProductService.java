@@ -4,28 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddProductDTO;
 import com.vmzone.demo.dto.EditProductDTO;
-import com.vmzone.demo.dto.ListFinalSubCategories;
 import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListProductBasicInfo;
 import com.vmzone.demo.dto.ListReview;
-import com.vmzone.demo.models.Category;
-import com.vmzone.demo.dto.ListSubCategory;
 import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.Category;
 import com.vmzone.demo.models.Product;
-import com.vmzone.demo.repository.CategoryRepository;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;
 
 @Service
 public class ProductService {
+	private static final int SMALL_QUANTITY_INDICATOR = 10;
+
 	@Autowired
 	private ProductRepository productRepository;
 
@@ -83,9 +81,26 @@ public class ProductService {
 		}
 		return result;
 	}
+	
+	public List<ListProduct> getAllProductsWithSmallQuantity(){
+		return this.productRepository.findAll().stream()
+				.filter(product -> product.getProductId() != null && product.getQuantity() < SMALL_QUANTITY_INDICATOR)
+				.map(product -> {
+					try {
+						return getAllInfoForProduct(product.getProductId());
+					} catch (BadCredentialsException e) {
+						e.printStackTrace();
+					}
+					return null;
+				})
+				.collect(Collectors.toList());
+	}
 
-	public void removeProductById(long id) {
+	public void removeProductById(long id) throws ResourceDoesntExistException {
 		Product product = this.productRepository.findById(id).get();
+		if(product == null) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
+		}
 		product.setIsDeleted(1);
 		this.productRepository.save(product);
 	}
@@ -94,9 +109,13 @@ public class ProductService {
 		return this.productRepository.findById(id).get();
 	}
 
-	public void editProduct(long id, EditProductDTO editedProduct) {
-		Product product = this.productRepository.findById(id).get();
 
+	public void editProduct( long id ,EditProductDTO editedProduct) throws ResourceDoesntExistException {
+		Product product = this.productRepository.findById(id).get();
+		if(product == null) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
+		}
+		
 		// TODO validation on optional
 		Category cat = this.categoryService.categoryRepository.findById(editedProduct.getCategoryId()).get();
 		product.setCategory(cat);
@@ -112,4 +131,32 @@ public class ProductService {
 		this.productRepository.save(product);
 
 	}
+	
+	
+	//TODO possibly a thread
+//	public void calculateRating() throws ResourceDoesntExistException {
+//		List<ListProduct> products = getAllproducts();
+//		
+//		if(products.isEmpty()) {
+//			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "There are no products");
+//		}
+//		
+//		for(ListProduct p : products) {
+//			List<ListReview> reviews = getReviewsForProduct(p.getId());
+//			p.fillReviews(reviews);
+//			Product prod = this.productRepository.findById(p.getId()).get();
+//			if(reviews.isEmpty()) {
+//				prod.setRating(Double.valueOf(0));
+//			} else {
+//				int sum = 0;
+//				for(ListReview r : reviews) {
+//					sum += r.getRating();
+//				}
+//				Double average = (double) (sum / reviews.size());
+//				prod.setRating(average);
+//			}
+//			this.productRepository.save(prod);
+//		}
+//		
+//	}
 }

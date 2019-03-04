@@ -17,6 +17,7 @@ import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListProductBasicInfo;
 import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.service.ProductService;
 
 @RestController
@@ -29,20 +30,24 @@ public class ProductController {
 		this.productService.addProduct(product);
 	}
 	
-	
 	// http://localhost:8080/product/?categoryId=1 Така се тества!
 	@GetMapping("/product")
 	public List<ListProductBasicInfo> getAllproductsForCategory(@RequestParam("categoryId") long id) {
 		return this.productService.getAllproducts(id);
 	}
 	
+	@GetMapping("/productsQuantity")
+	public List<ListProduct> getAllProductsWithSmallQuantity() {
+		return this.productService.getAllProductsWithSmallQuantity();
+	}
+	
 	@PutMapping("/product/remove/{id}")
-	public void removeProduct(@PathVariable long id) {
+	public void removeProduct(@PathVariable long id) throws ResourceDoesntExistException {
 		 this.productService.removeProductById(id);
 	}
 	
 	@PutMapping("/product/edit/{id}")
-	public void editProduct(@PathVariable long id,@RequestBody EditProductDTO product) {
+	public void editProduct(@PathVariable long id,@RequestBody EditProductDTO product) throws ResourceDoesntExistException {
 			this.productService.editProduct(id,product);
 	}
 	
@@ -55,5 +60,10 @@ public class ProductController {
 	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
 		return this.productService.getAllInfoForProduct(id);
 	}
-			
+
+//	@PostMapping("/calculate")
+//	public void calculateRating() throws ResourceDoesntExistException {
+//		this.productService.calculateRating();
+//	}
+		
 }
