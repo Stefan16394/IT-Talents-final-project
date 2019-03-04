@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vmzone.demo.dto.AddCategoryDTO;
 import com.vmzone.demo.dto.ListCategory;
 import com.vmzone.demo.dto.ListFinalSubCategories;
-import com.vmzone.demo.repository.CategoryRepository;
 import com.vmzone.demo.service.CategoryService;
 
 @RestController
