@@ -1,13 +1,19 @@
 package com.vmzone.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddCategoryDTO;
 import com.vmzone.demo.dto.ListCategory;
+import com.vmzone.demo.dto.ListFinalSubCategories;
 import com.vmzone.demo.dto.ListSubCategory;
 import com.vmzone.demo.models.Category;
 import com.vmzone.demo.repository.CategoryRepository;
@@ -45,5 +51,16 @@ public class CategoryService {
 				.filter(cat -> cat.getParent() != null && cat.getParent().getCategoryId().equals(id))
 				.map(subCat -> new ListSubCategory(subCat.getCategoryId(), subCat.getName()))
 				.collect(Collectors.toList());
+	}
+	
+	public List<ListFinalSubCategories> getLeafCategories(long id){
+
+		List<ListFinalSubCategories> subCats = new ArrayList<>();
+		List string = this.categoryRepository.getLeafCategories(id);
+		for(Object o:string) {
+			Object[] rows = (Object[]) o;
+			subCats.add(new ListFinalSubCategories(Long.parseLong(rows[0].toString()),rows[1].toString()));
+		}
+		return subCats;
 	}
 }

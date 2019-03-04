@@ -30,10 +30,9 @@ public class ListProduct {
 	}
 	
 	public void fillReviews(List<ListReview> reviews) {
-		if(reviews != null && !reviews.isEmpty()	) {
+		if(reviews != null && !reviews.isEmpty()) {
 			this.reviews = new LinkedList<ListReview>(reviews);
 		}
-		
 	}
 	
 

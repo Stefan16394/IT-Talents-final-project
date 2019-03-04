@@ -23,5 +23,4 @@ public class AddProductDTO {
 	private int inSale;
 	private String detailedInformation;
 	
-	
 }
