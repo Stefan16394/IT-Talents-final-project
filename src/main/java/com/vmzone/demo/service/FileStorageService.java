@@ -10,6 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.vmzone.demo.exceptions.FileStorageException;
 import com.vmzone.demo.exceptions.MyFileNotFoundException;
 import com.vmzone.demo.models.FileStorageProperties;
+import com.vmzone.demo.models.Photo;
+import com.vmzone.demo.repository.PhotoRepository;
+import com.vmzone.demo.repository.ProductRepository;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,6 +23,13 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class FileStorageService {
+	
+	@Autowired
+	private ProductRepository productRepository;
+	
+	@Autowired
+	private PhotoRepository photoRepository;
+	
 	private final Path fileStorageLocation;
 
     @Autowired
@@ -34,9 +44,11 @@ public class FileStorageService {
         }
     }
 
-    public String storeFile(MultipartFile file) {
+    public String storeFile(MultipartFile file, Long id) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String path = file.getOriginalFilename();
+        
 
         try {
             // Check if the file's name contains invalid characters
@@ -47,6 +59,9 @@ public class FileStorageService {
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            Photo photo = new Photo(this.productRepository.findById(id).get(), path);
+            
+            this.photoRepository.save(photo);
 
             return fileName;
         } catch (IOException ex) {
