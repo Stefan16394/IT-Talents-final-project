@@ -12,18 +12,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vmzone.demo.dto.AddProductDTO;
+import com.vmzone.demo.dto.AddProductInSaleDTO;
 import com.vmzone.demo.dto.EditProductDTO;
 import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListProductBasicInfo;
+import com.vmzone.demo.dto.ListProductsInSale;
 import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.exceptions.VMZoneException;
+import com.vmzone.demo.models.ProductInSale;
+import com.vmzone.demo.service.ProductInSaleService;
 import com.vmzone.demo.service.ProductService;
 
 @RestController
 public class ProductController {
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private ProductInSaleService productInSaleService;
 	
 	@PostMapping("/product")
 	public void addProduct(@RequestBody AddProductDTO product) {
@@ -68,6 +76,15 @@ public class ProductController {
 	@PostMapping("/calculate")
 	public void calculateRating() throws ResourceDoesntExistException {
 		this.productService.calculateRating();
+	}
+	
+	@PostMapping("/sale")
+	public void addProductInSale(@RequestBody AddProductInSaleDTO product) throws VMZoneException {
+		this.productInSaleService.addProductInSale(product);
+	}
+	@GetMapping("/sales")
+	public List<ListProductsInSale> getAllProductsInsale() {
+		return this.productInSaleService.showProductsInSale();
 	}
 		
 }
