@@ -8,9 +8,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.vmzone.demo.models.Product;
+import com.vmzone.demo.models.User;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+		
 	@Query(value = "SELECT * FROM products p WHERE p.category_id IN :ids", nativeQuery = true)
 	List<Object> getProductsPresentInCategories(@Param("ids") List<Long> categoriesIds);
 }

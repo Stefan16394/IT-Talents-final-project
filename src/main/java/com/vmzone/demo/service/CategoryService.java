@@ -20,6 +20,7 @@ import com.vmzone.demo.repository.CategoryRepository;
 
 @Service
 public class CategoryService {
+	
 	@Autowired
 	public CategoryRepository categoryRepository;
 

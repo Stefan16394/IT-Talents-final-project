@@ -3,6 +3,8 @@ package com.vmzone.demo.service;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -35,16 +37,18 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
 
-	public void register(RegisterDTO user) throws SQLException, ResourceAlreadyExistsException, AddressException, InvalidEmailException, MessagingException, IOException {
+	public void register(RegisterDTO user) throws SQLException, ResourceAlreadyExistsException, AddressException,
+			InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(user.getEmail());
 		if (u != null) {
 			throw new ResourceAlreadyExistsException(HttpStatus.CONFLICT,
 					"There is already an account with this email address " + u.getEmail());
 		}
 		String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-		
-		User newUser = new User(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(), hashedPassword,
-				user.getGender(), user.getIsAdmin(), user.getIsSubscribed(), null, null, null, null, 0, 0);
+
+		User newUser = new User(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(),
+				hashedPassword, user.getGender(), user.getIsAdmin(), user.getIsSubscribed(), null, null, null, null, 0,
+				0);
 		this.userRepository.save(newUser);
 		EmailSender.registration(user.getEmail());
 	}
@@ -60,14 +64,15 @@ public class UserService {
 		}
 		return user;
 	}
-	
+
 	public User editProfile(long id, EditProfileDTO user) throws ResourceDoesntExistException {
-		User u = this.userRepository.findById(id);
-		
-		if (u == null) {
+		User u = null;
+		try {
+			u = this.userRepository.findById(id).get();
+		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
-		
+
 		u.setName(user.getName());
 		u.setSurname(user.getSurname());
 		u.setEmail(user.getEmail());
@@ -81,58 +86,60 @@ public class UserService {
 
 		this.userRepository.save(u);
 		return u;
-		
+
 	}
-	
+
 	public void changePassword(long id, ChangePasswordDTO pass) throws ResourceDoesntExistException {
-		User u = this.userRepository.findById(id);
-		
-		if (u == null) {
+		User u = null;
+		try {
+			u = this.userRepository.findById(id).get();
+		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
-		
+
 		String hashedPassword = bCryptPasswordEncoder.encode(pass.getPassword());
 		u.setPassword(hashedPassword);
-		//System.out.println(bCryptPasswordEncoder.matches(pass.getPassword(), u.getPassword()));
+		// System.out.println(bCryptPasswordEncoder.matches(pass.getPassword(),
+		// u.getPassword()));
 	}
-	
-	public void forgottenPassword(String email) throws ResourceDoesntExistException, AddressException, InvalidEmailException, MessagingException, IOException {
+
+	public void forgottenPassword(String email) throws ResourceDoesntExistException, AddressException,
+			InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(email);
-		
+
 		if (u == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
 		String hashedPassword = bCryptPasswordEncoder.encode(EmailSender.forgottenPassword(u.getEmail()));
 		u.setPassword(hashedPassword);
 	}
-	
+
 	public void sendSubscribed() throws AddressException, InvalidEmailException, MessagingException, IOException {
-		List<String> emails = this.userRepository.findAll()
-				.stream()
-				.filter(user -> user.getIsSubscribed() == 0)
-				.map(user -> user.getEmail())
-				.collect(Collectors.toList());
-		
+		List<String> emails = this.userRepository.findAll().stream().filter(user -> user.getIsSubscribed() == 0)
+				.map(user -> user.getEmail()).collect(Collectors.toList());
+
 		EmailSender.sendSubscripedPromotions(emails);
-				
+
 	}
-	
+
 	public void removeUserById(long id) throws ResourceDoesntExistException {
-		User user = this.userRepository.findById(id);
-		if(user == null) {
+		User u = null;
+		try {
+			u = this.userRepository.findById(id).get();
+		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
-		user.setIsDeleted(1);
-		this.userRepository.save(user);
-		
+		u.setIsDeleted(1);
+		this.userRepository.save(u);
+
 	}
-	
-	
-	public void contactUs(ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
-		if(!RegexValidator.validateEmail(contact.getEmail())) {
+
+	public void contactUs(ContactUsDTO contact)
+			throws InvalidEmailException, AddressException, MessagingException, IOException {
+		if (!RegexValidator.validateEmail(contact.getEmail())) {
 			throw new InvalidEmailException(HttpStatus.UNAUTHORIZED, "Incorrect email or password");
-		} 
-		
+		}
+
 		EmailSender.contactUs(contact.toString());
 	}
 }

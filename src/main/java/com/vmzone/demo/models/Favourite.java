@@ -42,8 +42,6 @@ public class Favourite {
 	public Favourite(Product product, User user) {
 		super();
 		this.product = product;
-		this.user = user;
-		
+		this.user = user;	
 	}
-
 }

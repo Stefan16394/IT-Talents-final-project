@@ -18,7 +18,7 @@ public class ReviewController {
 	private ReviewService reviewService;
 	
 	@PostMapping("/review")
-	public void addReview(@RequestBody AddReviewDTO review) {
+	public void addReview(@RequestBody AddReviewDTO review) throws ResourceDoesntExistException {
 		this.reviewService.addReview(review);
 	}
 	
