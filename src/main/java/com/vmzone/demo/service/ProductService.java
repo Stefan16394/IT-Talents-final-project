@@ -24,8 +24,7 @@ import com.vmzone.demo.repository.ReviewRepository;
 public class ProductService {
 	private static final int SMALL_QUANTITY_INDICATOR = 10;
 
-	@Autowired
-	private ProductRepository productRepository;
+	@Autowired ProductRepository productRepository;
 
 	@Autowired
 	private CategoryService categoryService;

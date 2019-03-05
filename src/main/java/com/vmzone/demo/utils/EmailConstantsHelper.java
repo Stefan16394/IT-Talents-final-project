@@ -8,6 +8,8 @@ public class EmailConstantsHelper {
 	final static String SUBJECT_CONTACT_US = "Запитване от потребител";
 	final static String SUBJECT_WELCOME = "Добре дошли във vmzona!";
 	
+	final static String PRODUCT_URL = "http://localhost:8080/sales";
+	
 
 	public static String forgottenPassword(){
 		StringBuffer message = new StringBuffer();
@@ -31,9 +33,9 @@ public class EmailConstantsHelper {
 		StringBuffer message = new StringBuffer();
 		message.append("Здравейте,");
 		message.append(System.lineSeparator());
-		message.append("Вие сте се абонирали да получавате бюлетин от Vmzona./n Изпращаме ви най-новите промоции в нашия сайт.");
+		message.append("Вие сте се абонирали да получавате бюлетин от Vmzona./n Изпращаме ви най-новите промоции в нашия сайт на следния адрес:");
 		message.append(System.lineSeparator());
-		//TODO get all products with promotions
+		message.append(PRODUCT_URL);
 		message.append(System.lineSeparator());
 		message.append("Пожелаваме ви лек ден,");
 		message.append(System.lineSeparator());

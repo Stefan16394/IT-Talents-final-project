@@ -42,7 +42,7 @@ public class FavouritesService {
 	public void removeFavouriteById(long id) throws ResourceDoesntExistException {
 		Favourite fav = this.favouritesRepository.findById(id);
 		if(fav == null) {
-			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist");
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
 		}
 		fav.setIsDeleted(1);
 		this.favouritesRepository.save(fav);
@@ -54,5 +54,7 @@ public class FavouritesService {
 				.map(fav -> new ListFavouriteProductDTO(fav.getProduct().getTitle(), fav.getProduct().getInformation(), fav.getProduct().getRating()))
 				.collect(Collectors.toList());
 	}
+	
+	
 
 }

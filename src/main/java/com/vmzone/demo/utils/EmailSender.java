@@ -17,12 +17,15 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import com.vmzone.demo.exceptions.InvalidEmailException;
 import com.vmzone.demo.models.User;
+import com.vmzone.demo.repository.UserRepository;
 
 public class EmailSender {
+	
 	
 	public static final String EMAIL = "vmzona.noreply@gmail.com";
 	private static final String PASS = "vmzona123456";
@@ -47,6 +50,7 @@ public class EmailSender {
 		}
 		
 	}
+	
 	
 	public static void contactUs(String text) throws AddressException, InvalidEmailException, MessagingException, IOException {
 		sendEmail(EMAIL, EmailConstantsHelper.SUBJECT_CONTACT_US, text);

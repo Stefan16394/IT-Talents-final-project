@@ -1,6 +1,7 @@
 package com.vmzone.demo.models;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,5 +57,8 @@ public class Product {
 		this.inSale = inSale;
 		this.detailedInformation = detailedInformation;
 	}
+
+
+
 
 }
