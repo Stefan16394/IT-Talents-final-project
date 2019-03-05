@@ -54,5 +54,7 @@ public class FavouritesService {
 				.map(fav -> new ListFavouriteProductDTO(fav.getProduct().getTitle(), fav.getProduct().getInformation(), fav.getProduct().getRating()))
 				.collect(Collectors.toList());
 	}
+	
+	
 
 }

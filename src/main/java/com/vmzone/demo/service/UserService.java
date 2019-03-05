@@ -117,6 +117,7 @@ public class UserService {
 				
 	}
 	
+	
 	public void removeUserById(long id) throws ResourceDoesntExistException {
 		User user = this.userRepository.findById(id);
 		if(user == null) {
