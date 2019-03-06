@@ -1,8 +1,11 @@
 package com.vmzone.demo.controllers;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.base.Joiner;
 import com.vmzone.demo.dto.AddProductDTO;
 import com.vmzone.demo.dto.AddProductInSaleDTO;
 import com.vmzone.demo.dto.EditProductDTO;
@@ -21,12 +25,18 @@ import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.exceptions.VMZoneException;
+import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.ProductInSale;
+import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.service.ProductInSaleService;
 import com.vmzone.demo.service.ProductService;
 
 @RestController
 public class ProductController {
+	
+	@Autowired
+	private ProductRepository productRepository;
+	
 	@Autowired
 	private ProductService productService;
 	
@@ -67,6 +77,13 @@ public class ProductController {
 	public List<ListProduct> getAllproducts() {
 		return this.productService.getAllproducts();
 	}
+	//TODO needs to be done properly
+	@GetMapping("/productsSort")
+	public List<ListProductBasicInfo> getAllproducts(
+			@RequestParam(name="sortBy", required=false) String sortBy,
+			@RequestParam(name="categoryId", required=false) Long categoryId) {
+		return this.productService.getAllproducts(sortBy, categoryId);
+	}
 
 	@GetMapping("/info/{id}")
 	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
@@ -86,5 +103,8 @@ public class ProductController {
 	public List<ListProductsInSale> getAllProductsInsale() {
 		return this.productInSaleService.showProductsInSale();
 	}
+	
+	
+	
 		
 }

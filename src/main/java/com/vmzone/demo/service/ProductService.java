@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ import com.vmzone.demo.repository.ReviewRepository;
 @Service
 public class ProductService {
 	private static final int SMALL_QUANTITY_INDICATOR = 10;
+
 
 	@Autowired ProductRepository productRepository;
 
@@ -144,6 +149,27 @@ public class ProductService {
 				})
 				.collect(Collectors.toList());
 	}
+	//TODO do for colour and size
+	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId){
+		return this.productRepository.findAll().stream()
+				.filter(product -> categoryId == null || product.getCategory().getCategoryId().equals(categoryId))
+				.sorted((p1, p2) -> {
+					switch(sortBy) {
+					case "newest" : return p1.getDate().compareTo(p2.getDate());
+					case "oldest" : return p2.getDate().compareTo(p1.getDate());
+					case "ascending price" : return Double.compare(p1.getPrice(), p2.getPrice());
+					case "descending price" : return Double.compare(p2.getPrice(), p1.getPrice());
+					case "ascending alphabetic" : return p1.getTitle().compareTo(p2.getTitle());
+					case "descending alphabetic" : return p2.getTitle().compareTo(p1.getTitle());
+					case "fastest delivery" : return p1.getDelivery() - p2.getDelivery();
+					case "ascending rating" : return Double.compare(p1.getRating(), p2.getRating());
+					case "descending rating" : return Double.compare(p2.getRating(), p1.getRating());
+					default : return 1;
+					}
+				})
+				.map(product -> new ListProductBasicInfo(product.getProductId(), product.getTitle(), product.getPrice(), product.getDate()))
+				.collect(Collectors.toList());
+	}
 	
 	
 	//TODO possibly a thread
@@ -172,4 +198,6 @@ public class ProductService {
 		}
 		
 	}
+	
+
 }

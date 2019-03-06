@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.jboss.logging.Field;
+import org.springframework.stereotype.Indexed;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +36,7 @@ public class Product {
 
 	private String title;
 	private String information;
+	private double price;
 	private int inStock;
 	private int delivery;
 	private LocalDateTime date;
