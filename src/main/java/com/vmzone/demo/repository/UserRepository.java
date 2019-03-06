@@ -25,4 +25,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	void addProductToCart(@Param("productId") Long productId, @Param("quantity") int quantity,
 			@Param("userId") Long userId);
 
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE shopping_cart SET quantity = :quantity WHERE user_id = :userId AND product_id = :productId LIMIT 1", nativeQuery = true)
+	void updateProductInCart(@Param("productId") Long productId, @Param("quantity") int quantity,
+			@Param("userId") Long userId);
+
+	@Modifying
+	@Transactional
+	@Query(value = "DELETE FROM shopping_cart WHERE user_id = :userId AND product_id = :productId LIMIT 1", nativeQuery = true)
+	void deleteProductInCart(@Param("productId") Long productId, @Param("userId") Long userId);
+
 }

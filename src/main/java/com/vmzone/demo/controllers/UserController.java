@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.vmzone.demo.dto.CartProductDTO;
 import com.vmzone.demo.dto.ChangePasswordDTO;
 import com.vmzone.demo.dto.ContactUsDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
@@ -33,7 +35,6 @@ import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.InvalidEmailException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
-import com.vmzone.demo.models.AddProductToCart;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.UserService;
 
@@ -70,9 +71,19 @@ public class UserController {
 	}
 
 	
-	@PostMapping("/product/add")
-	public void addProductToCart(@RequestBody AddProductToCart addProduct) {
+	@PostMapping("/product/cart")
+	public void addProductToCart(@RequestBody CartProductDTO addProduct) {
 		this.userService.addProductToCart(addProduct);
+	}
+	
+	@PutMapping("/product/cart/update")
+	public void updateProductInCart(@RequestBody CartProductDTO editProduct) {
+		this.userService.updateProductInCart(editProduct);
+	}
+	
+	@DeleteMapping("/product/cart/delete")
+	public void deleteProductInCart(@RequestParam long productId,@RequestParam long userId) {
+		this.userService.deleteProductInCart(productId,userId);
 	}
 	
 	

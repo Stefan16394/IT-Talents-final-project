@@ -2,7 +2,6 @@ package com.vmzone.demo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -14,22 +13,18 @@ import java.util.Optional;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
-import org.assertj.core.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.vmzone.demo.dto.ChangePasswordDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
-import com.vmzone.demo.dto.EditReviewDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
 import com.vmzone.demo.dto.ShoppingCartItem;
@@ -40,7 +35,6 @@ import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.UserRepository;
 import com.vmzone.demo.service.UserService;
-import com.vmzone.demo.utils.EmailSender;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 @SpringBootTest
@@ -183,9 +177,8 @@ public class UserServiceTests {
 		}
 		
 		assertTrue(areEqual);
-
 	}
-
+	
 	@Configuration
 	static class Config {
 

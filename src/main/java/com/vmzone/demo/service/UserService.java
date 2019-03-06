@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.vmzone.demo.dto.CartProductDTO;
 import com.vmzone.demo.dto.ChangePasswordDTO;
 import com.vmzone.demo.dto.ContactUsDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
@@ -27,7 +28,6 @@ import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.InvalidEmailException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
-import com.vmzone.demo.models.AddProductToCart;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.UserRepository;
 import com.vmzone.demo.utils.EmailSender;
@@ -158,8 +158,16 @@ public class UserService {
 		return items;
 	}
 	
-	public void addProductToCart(AddProductToCart addProduct) {
-		System.out.println(addProduct);
+	public void addProductToCart(CartProductDTO addProduct) {
 		this.userRepository.addProductToCart(addProduct.getProductId(), addProduct.getQuantity(), addProduct.getUserId());
+	}
+	
+	public void updateProductInCart(CartProductDTO editProduct) {
+		this.userRepository.updateProductInCart(editProduct.getProductId(), editProduct.getQuantity(), editProduct.getUserId());
+	}
+
+	public void deleteProductInCart(long productId, long userId) {
+		this.userRepository.deleteProductInCart(productId,userId);
+		
 	}
 }

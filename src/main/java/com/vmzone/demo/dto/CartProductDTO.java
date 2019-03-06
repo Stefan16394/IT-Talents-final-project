@@ -1,4 +1,4 @@
-package com.vmzone.demo.models;
+package com.vmzone.demo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class AddProductToCart {
+public class CartProductDTO {
 	private Long productId;
 	private int quantity;
 	private Long userId;
