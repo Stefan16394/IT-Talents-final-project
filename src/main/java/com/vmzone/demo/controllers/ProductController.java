@@ -95,8 +95,13 @@ public class ProductController {
 	}
 	
 	@GetMapping("/searchPrice/{min}/{max}")
-	public List<ListProductBasicInfo> searchPrice(@PathVariable("min") double min, @PathVariable("max") double max){
+	public List<ListProductBasicInfo> searchPrice(@PathVariable("min") double min , @PathVariable("max") double max){
 		return this.productService.searchPrice(min, max);
+	}
+	
+	@GetMapping("/search")
+	public List<ListProductBasicInfo> search(@RequestParam("search") String str){
+		return this.productService.searchTitle(str);
 	}
 
 	

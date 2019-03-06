@@ -198,7 +198,7 @@ public class ProductService {
 	
 	public List<ListProductBasicInfo> searchPrice(double min, double max){
 	
-		List<Product> products =  this.productRepository.search(min, max);
+		List<Product> products =  this.productRepository.searchPrice(min, max);
 		List<ListProductBasicInfo> result = new LinkedList<>(); 
 		
 		for(Product p : products) {
@@ -206,8 +206,18 @@ public class ProductService {
 			result.add(prod);
 		}
 		return result;
+	}
+	
+	public List<ListProductBasicInfo> searchTitle(String str){
+		str = "%" + str + "%";
+		List<Product> products =  this.productRepository.search(str);
+		List<ListProductBasicInfo> result = new LinkedList<>(); 
 		
-		
+		for(Product p : products) {
+			ListProductBasicInfo prod = new ListProductBasicInfo(p.getProductId(), p.getTitle(), p.getPrice(), p.getDate());
+			result.add(prod);
+		}
+		return result;
 	}
 	
 

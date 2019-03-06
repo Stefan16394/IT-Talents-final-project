@@ -16,7 +16,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Object> getProductsPresentInCategories(@Param("ids") List<Long> categoriesIds);
 	
 	@Query(value = "SELECT * FROM products p WHERE p.price BETWEEN :min AND :max", nativeQuery = true)
-	public List<Product> search(@Param("min") double min, @Param("max") double max);
+	public List<Product> searchPrice(@Param("min") double min, @Param("max") double max);
+	
+	@Query(value = "SELECT * FROM products p WHERE p.title LIKE :str OR p.information LIKE :str", nativeQuery = true)
+	public List<Product> search(@Param("str") String str);
 	
 
 
