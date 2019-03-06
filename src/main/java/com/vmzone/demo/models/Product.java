@@ -42,8 +42,6 @@ public class Product {
 	private String detailedInformation;
 	private Double rating;
 	
-	
-
 	public Product(Category category, String title, String information, int inStock, int delivery,
 			 int quantity, int inSale, String detailedInformation) {
 		super();
@@ -57,8 +55,4 @@ public class Product {
 		this.inSale = inSale;
 		this.detailedInformation = detailedInformation;
 	}
-
-
-
-
 }

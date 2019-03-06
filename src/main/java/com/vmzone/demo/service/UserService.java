@@ -2,6 +2,9 @@ package com.vmzone.demo.service;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -19,10 +22,12 @@ import com.vmzone.demo.dto.ContactUsDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
+import com.vmzone.demo.dto.ShoppingCartItem;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.InvalidEmailException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.AddProductToCart;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.UserRepository;
 import com.vmzone.demo.utils.EmailSender;
@@ -140,5 +145,21 @@ public class UserService {
 		}
 
 		EmailSender.contactUs(contact.toString());
+	}
+	
+	public List<ShoppingCartItem> getShoppingCart(long id) {
+		List<ShoppingCartItem> items= new ArrayList<>();
+		List<Object> objects = this.userRepository.getShoppingCart(id);
+		for(Object o :objects) {
+			Object[] row = (Object[]) o;
+			items.add(new ShoppingCartItem(Long.parseLong(row[0].toString()), row[1].toString(), Double.parseDouble(row[2].toString()),
+					Integer.parseInt(row[3].toString())));
+		}
+		return items;
+	}
+	
+	public void addProductToCart(AddProductToCart addProduct) {
+		System.out.println(addProduct);
+		this.userRepository.addProductToCart(addProduct.getProductId(), addProduct.getQuantity(), addProduct.getUserId());
 	}
 }

@@ -2,6 +2,7 @@ package com.vmzone.demo.controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,10 +28,12 @@ import com.vmzone.demo.dto.ContactUsDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
+import com.vmzone.demo.dto.ShoppingCartItem;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.InvalidEmailException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.AddProductToCart;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.UserService;
 
@@ -52,12 +56,25 @@ public class UserController {
 	}
 
 	@PostMapping("/user/login")
-	public void login(@RequestBody @Valid LoginDTO loginDTO, HttpSession session)
+	public User  login(@RequestBody @Valid LoginDTO loginDTO, HttpSession session)
 			throws ResourceDoesntExistException, BadCredentialsException {
 		User user = this.userService.login(loginDTO);
+		
 		session.setAttribute("user", user);
-
+        return user;
 	}
+	
+	@GetMapping("/cart/{id}")
+	public List<ShoppingCartItem> getShoppingCart(@PathVariable long id) {
+		return this.userService.getShoppingCart(id);
+	}
+
+	
+	@PostMapping("/product/add")
+	public void addProductToCart(@RequestBody AddProductToCart addProduct) {
+		this.userService.addProductToCart(addProduct);
+	}
+	
 	
 	@PutMapping("/editProfile/{id}")
 	public User editProfile(@PathVariable long id, @RequestBody @Valid EditProfileDTO user, HttpSession session) throws ResourceDoesntExistException {
@@ -79,7 +96,6 @@ public class UserController {
 	
 	@PostMapping("/forgottenPassword")
 	public void forgottenPassword(@RequestParam("email") String email) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
-	
 		this.userService.forgottenPassword(email);
 	}
 	
@@ -101,8 +117,6 @@ public class UserController {
 		 this.userService.removeUserById(id);
 	}
 	
-	
-	
 	@PostMapping("/logout")
 	public void logout(HttpServletRequest request) throws ResourceDoesntExistException {
 		HttpSession session = request.getSession();
@@ -112,4 +126,6 @@ public class UserController {
 		}
 		session.invalidate();
 	}
+	
+	
 }
