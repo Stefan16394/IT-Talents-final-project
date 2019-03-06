@@ -7,14 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.vmzone.demo.dto.AddReviewDTO;
 import com.vmzone.demo.dto.AddToFavouritesDTO;
 import com.vmzone.demo.dto.ListFavouriteProductDTO;
-import com.vmzone.demo.dto.ListProduct;
-import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Favourite;
-import com.vmzone.demo.models.Review;
 import com.vmzone.demo.repository.FavouritesRepository;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.UserRepository;

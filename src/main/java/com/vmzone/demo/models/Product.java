@@ -1,7 +1,6 @@
 package com.vmzone.demo.models;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.jboss.logging.Field;
-import org.springframework.stereotype.Indexed;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

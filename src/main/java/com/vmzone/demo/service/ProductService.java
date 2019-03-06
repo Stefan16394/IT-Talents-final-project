@@ -1,12 +1,9 @@
 package com.vmzone.demo.service;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -196,6 +193,20 @@ public class ProductService {
 			}
 			this.productRepository.save(prod);
 		}
+		
+	}
+	
+	public List<ListProductBasicInfo> searchPrice(double min, double max){
+	
+		List<Product> products =  this.productRepository.search(min, max);
+		List<ListProductBasicInfo> result = new LinkedList<>(); 
+		
+		for(Product p : products) {
+			ListProductBasicInfo prod = new ListProductBasicInfo(p.getProductId(), p.getTitle(), p.getPrice(), p.getDate());
+			result.add(prod);
+		}
+		return result;
+		
 		
 	}
 	

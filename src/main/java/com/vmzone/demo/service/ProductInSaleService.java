@@ -10,9 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddProductInSaleDTO;
-import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListProductsInSale;
-import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.InvalidDataGivenException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.exceptions.VMZoneException;

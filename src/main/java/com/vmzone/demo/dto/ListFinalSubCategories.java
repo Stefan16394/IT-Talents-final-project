@@ -1,7 +1,5 @@
 package com.vmzone.demo.dto;
 
-import javax.persistence.Entity;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

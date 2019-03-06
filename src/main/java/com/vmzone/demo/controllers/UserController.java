@@ -23,7 +23,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.vmzone.demo.dto.ChangePasswordDTO;
 import com.vmzone.demo.dto.ContactUsDTO;
-import com.vmzone.demo.dto.EditProductDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;

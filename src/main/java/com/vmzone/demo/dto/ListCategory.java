@@ -2,8 +2,6 @@ package com.vmzone.demo.dto;
 
 import java.util.List;
 
-import javax.persistence.OneToMany;
-
 import com.vmzone.demo.models.Category;
 
 import lombok.AllArgsConstructor;

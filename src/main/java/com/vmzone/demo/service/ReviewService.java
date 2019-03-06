@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.vmzone.demo.dto.AddReviewDTO;
 import com.vmzone.demo.dto.EditReviewDTO;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
-import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.Review;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;

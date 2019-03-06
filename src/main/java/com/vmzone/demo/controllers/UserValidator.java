@@ -3,7 +3,6 @@ package com.vmzone.demo.controllers;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
 
 public class UserValidator implements Validator {
