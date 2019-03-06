@@ -46,9 +46,6 @@ public class Review {
 		this.user = user;
 		this.review = review;
 		this.rating = rating;
-		this.date = LocalDateTime.now();
-		
+		this.date = LocalDateTime.now();	
 	}
-
-
 }
