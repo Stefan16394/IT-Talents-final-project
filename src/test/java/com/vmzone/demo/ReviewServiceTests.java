@@ -24,7 +24,7 @@ import com.vmzone.demo.repository.ReviewRepository;
 import com.vmzone.demo.repository.UserRepository;
 import com.vmzone.demo.service.ReviewService;
 
-@RunWith(MockitoJUnitRunner.Silent.class) 
+@RunWith(MockitoJUnitRunner.Silent.class)
 @SpringBootTest
 public class ReviewServiceTests {
 
