@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.vmzone.demo.dto.UploadFileResponse;
+import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.FileStorageService;
 
 @RestController
@@ -36,7 +40,15 @@ public class FileController {
     private FileStorageService fileStorageService;
     
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id ) {
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id, HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException {
+    	
+    	if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+    	
         String fileName = fileStorageService.storeFile(file, id);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -49,16 +61,39 @@ public class FileController {
     }
 
     @PostMapping("/uploadMultipleFiles")
-    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("id") Long id) {
-        return Arrays.asList(files)
+    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("id") Long id, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+       
+    	if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+    	
+    	return Arrays.asList(files)
                 .stream()
-                .map(file -> uploadFile(file, id))
+                .map(file -> {
+					try {
+						return uploadFile(file, id, session);
+					} catch (ResourceDoesntExistException | BadCredentialsException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				})
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/downloadFile/{fileName:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) throws MalformedURLException {
-        // Load file as Resource
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request, HttpSession session) throws MalformedURLException, ResourceDoesntExistException, BadCredentialsException {
+    	if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+    	
+    	// Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 
         // Try to determine file's content type

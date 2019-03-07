@@ -30,6 +30,7 @@ public class RegisterDTO {
 	private String password;
     
 	private String gender;
+	//TODO should not be here
 	@NotNull
 	private int isAdmin;
 	@NotNull

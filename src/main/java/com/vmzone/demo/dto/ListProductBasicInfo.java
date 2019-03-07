@@ -22,6 +22,11 @@ public class ListProductBasicInfo {
 		this.title = title;
 	}
 	
+	public ListProductBasicInfo(String title, double price){
+		this.title = title;
+		this.price = price;
+	}
+	
 	// TO DO ADD MORE FIELDS HERE!!!
 
 }

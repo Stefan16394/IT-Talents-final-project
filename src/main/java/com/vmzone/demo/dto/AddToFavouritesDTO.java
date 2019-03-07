@@ -10,6 +10,5 @@ import lombok.ToString;
 public class AddToFavouritesDTO {
 	
 	private Long productId;
-	private Long userId;
 
 }

@@ -27,17 +27,19 @@ public class FavouritesService {
 	@Autowired
 	private ProductRepository productRepository;
 	
-	public void addToFavourites(AddToFavouritesDTO fav ) {
+	public void addToFavourites(AddToFavouritesDTO fav, long id ) {
 		System.out.println(fav);
 		Favourite newFav = new Favourite(
 				this.productRepository.findById(fav.getProductId()).get(),
-				this.userRepository.findById(fav.getUserId()).get());
+				this.userRepository.findById(id).get());
 		this.favouritesRepository.save(newFav);
 	}
 	
-	public void removeFavouriteById(long id) throws ResourceDoesntExistException {
+	public void removeFavouriteById(long id, long userId) throws ResourceDoesntExistException {
+		List<Favourite> list = this.favouritesRepository.findFavouritesByUser(userId);
 		Favourite fav = this.favouritesRepository.findById(id);
-		if(fav == null) {
+		
+		if(fav == null || !list.contains(fav)) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
 		}
 		fav.setIsDeleted(1);

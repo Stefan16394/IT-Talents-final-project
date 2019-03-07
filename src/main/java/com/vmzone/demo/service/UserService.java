@@ -69,14 +69,20 @@ public class UserService {
 		return user;
 	}
 
-	public User editProfile(long id, EditProfileDTO user) throws ResourceDoesntExistException {
+	public User editProfile(long id, EditProfileDTO user) throws ResourceDoesntExistException, ResourceAlreadyExistsException {
 		User u = null;
 		try {
 			u = this.userRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
-
+		
+		User check = this.userRepository.findByEmail(user.getEmail());
+		
+		if(check != null && !u.equals(check)) {
+			throw new ResourceAlreadyExistsException(HttpStatus.CONFLICT, "There is already a user with this email!");
+		}
+				
 		u.setName(user.getName());
 		u.setSurname(user.getSurname());
 		u.setEmail(user.getEmail());
@@ -103,10 +109,9 @@ public class UserService {
 
 		String hashedPassword = bCryptPasswordEncoder.encode(pass.getPassword());
 		u.setPassword(hashedPassword);
-		// System.out.println(bCryptPasswordEncoder.matches(pass.getPassword(),
-		// u.getPassword()));
+		this.userRepository.save(u);
 	}
-
+	//TODO test it if it works
 	public void forgottenPassword(String email) throws ResourceDoesntExistException, AddressException,
 			InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(email);
@@ -116,6 +121,7 @@ public class UserService {
 		}
 		String hashedPassword = bCryptPasswordEncoder.encode(EmailSender.forgottenPassword(u.getEmail()));
 		u.setPassword(hashedPassword);
+		this.userRepository.save(u);
 	}
 
 	public void sendSubscribed() throws AddressException, InvalidEmailException, MessagingException, IOException {
@@ -158,16 +164,17 @@ public class UserService {
 		return items;
 	}
 	
-	public void addProductToCart(CartProductDTO addProduct) {
-		this.userRepository.addProductToCart(addProduct.getProductId(), addProduct.getQuantity(), addProduct.getUserId());
+	public void addProductToCart(CartProductDTO addProduct, long id) {
+		this.userRepository.addProductToCart(addProduct.getProductId(), addProduct.getQuantity(), id);
 	}
 	
-	public void updateProductInCart(CartProductDTO editProduct) {
-		this.userRepository.updateProductInCart(editProduct.getProductId(), editProduct.getQuantity(), editProduct.getUserId());
+	public void updateProductInCart(CartProductDTO editProduct, long id) {
+		this.userRepository.updateProductInCart(editProduct.getProductId(), editProduct.getQuantity(), id);
 	}
 
 	public void deleteProductInCart(long productId, long userId) {
 		this.userRepository.deleteProductInCart(productId,userId);
 		
 	}
+	
 }
