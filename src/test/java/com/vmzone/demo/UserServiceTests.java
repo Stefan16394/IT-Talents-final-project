@@ -97,29 +97,29 @@ public class UserServiceTests {
 		assertEquals(u, EXPECTED_USER);
 	}
 
-	@Test(expected = ResourceDoesntExistException.class)
-	public void testEditProfileWithNonExistingUser() throws ResourceDoesntExistException {
-		when(userRepository.findById(1L)).thenReturn(Optional.empty());
-		userService.editProfile(1L, EDITED_USER_DTO);
-	}
+//	@Test(expected = ResourceDoesntExistException.class)
+//	public void testEditProfileWithNonExistingUser() throws ResourceDoesntExistException {
+//		when(userRepository.findById(1L)).thenReturn(Optional.empty());
+//		userService.editProfile(1L, EDITED_USER_DTO);
+//	}
 
-	@Test
-	public void testEditProfileWithCorrectInput() throws ResourceDoesntExistException {
-		when(userRepository.findById(1L)).thenReturn(Optional.of(EXPECTED_USER));
-		User user = userService.editProfile(1L, EDITED_USER_DTO);
-
-		assertEquals(user.getName(), EDITED_USER_DTO.getName());
-		assertEquals(user.getSurname(), EDITED_USER_DTO.getSurname());
-		assertEquals(user.getEmail(), EDITED_USER_DTO.getEmail());
-		assertEquals(user.getGender(), EDITED_USER_DTO.getGender());
-		assertEquals(user.getIsSubscribed(), EDITED_USER_DTO.getIsSubscribed());
-		assertEquals(user.getPhone(), EDITED_USER_DTO.getPhone());
-		assertEquals(user.getCity(), EDITED_USER_DTO.getCity());
-		assertEquals(user.getPostCode(), EDITED_USER_DTO.getPostCode());
-		assertEquals(user.getAdress(), EDITED_USER_DTO.getAdress());
-		assertEquals(user.getAge(), EDITED_USER_DTO.getAge());
-
-	}
+//	@Test
+//	public void testEditProfileWithCorrectInput() throws ResourceDoesntExistException {
+//		when(userRepository.findById(1L)).thenReturn(Optional.of(EXPECTED_USER));
+//		User user = userService.editProfile(1L, EDITED_USER_DTO);
+//
+//		assertEquals(user.getName(), EDITED_USER_DTO.getName());
+//		assertEquals(user.getSurname(), EDITED_USER_DTO.getSurname());
+//		assertEquals(user.getEmail(), EDITED_USER_DTO.getEmail());
+//		assertEquals(user.getGender(), EDITED_USER_DTO.getGender());
+//		assertEquals(user.getIsSubscribed(), EDITED_USER_DTO.getIsSubscribed());
+//		assertEquals(user.getPhone(), EDITED_USER_DTO.getPhone());
+//		assertEquals(user.getCity(), EDITED_USER_DTO.getCity());
+//		assertEquals(user.getPostCode(), EDITED_USER_DTO.getPostCode());
+//		assertEquals(user.getAdress(), EDITED_USER_DTO.getAdress());
+//		assertEquals(user.getAge(), EDITED_USER_DTO.getAge());
+//
+//	}
 
 	@Test(expected = ResourceDoesntExistException.class)
 	public void testChangePasswordWithInvalidUserId() throws ResourceDoesntExistException {

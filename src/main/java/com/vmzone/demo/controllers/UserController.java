@@ -65,44 +65,58 @@ public class UserController {
         return user;
 	}
 	
-	@GetMapping("/cart/{id}")
-	public List<ShoppingCartItem> getShoppingCart(@PathVariable long id) {
-		return this.userService.getShoppingCart(id);
+	//TODO should it be without login or not?
+	@GetMapping("/cart")
+	public List<ShoppingCartItem> getShoppingCart(HttpSession session) throws ResourceDoesntExistException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		return this.userService.getShoppingCart(((User) session.getAttribute("user")).getUserId());
 	}
 
 	
 	@PostMapping("/product/cart")
-	public void addProductToCart(@RequestBody CartProductDTO addProduct) {
-		this.userService.addProductToCart(addProduct);
+	public void addProductToCart(@RequestBody CartProductDTO addProduct, HttpSession session) throws ResourceDoesntExistException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		this.userService.addProductToCart(addProduct, ((User) session.getAttribute("user")).getUserId());
 	}
 	
 	@PutMapping("/product/cart/update")
-	public void updateProductInCart(@RequestBody CartProductDTO editProduct) {
-		this.userService.updateProductInCart(editProduct);
+	public void updateProductInCart(@RequestBody CartProductDTO editProduct, HttpSession session) throws ResourceDoesntExistException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		this.userService.updateProductInCart(editProduct, ((User) session.getAttribute("user")).getUserId());
 	}
 	
 	@DeleteMapping("/product/cart/delete")
-	public void deleteProductInCart(@RequestParam long productId,@RequestParam long userId) {
-		this.userService.deleteProductInCart(productId,userId);
+	public void deleteProductInCart(@RequestParam("product") long productId,HttpSession session) throws ResourceDoesntExistException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		this.userService.deleteProductInCart(productId, ((User) session.getAttribute("user")).getUserId());
 	}
 	
 	
-	@PutMapping("/editProfile/{id}")
-	public User editProfile(@PathVariable long id, @RequestBody @Valid EditProfileDTO user, HttpSession session) throws ResourceDoesntExistException {
+	@PutMapping("/editProfile")
+	public User editProfile(@RequestBody @Valid EditProfileDTO user, HttpSession session) throws ResourceDoesntExistException, ResourceAlreadyExistsException {
 		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
 		
-		return this.userService.editProfile(id, user);
+		return this.userService.editProfile(((User) session.getAttribute("user")).getUserId(), user);
 	}
 	
-	@PostMapping("/changePassword/{id}")
-	public void changePassword(@PathVariable long id, @RequestBody @Valid ChangePasswordDTO pass, HttpSession session) throws ResourceDoesntExistException {
+	@PostMapping("/changePassword")
+	public void changePassword(@RequestBody @Valid ChangePasswordDTO pass, HttpSession session) throws ResourceDoesntExistException {
 		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
 		
-		this.userService.changePassword(id, pass);
+		
+		this.userService.changePassword(((User) session.getAttribute("user")).getUserId(), pass);
 	}
 	
 	@PostMapping("/forgottenPassword")
@@ -110,10 +124,16 @@ public class UserController {
 		this.userService.forgottenPassword(email);
 	}
 	
-
+	//TODO threads
 	@PostMapping("/sendSubscribed")
-	public void sendSubcribed() throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
+	public void sendSubcribed(HttpSession session) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException, BadCredentialsException {
 		
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
 		this.userService.sendSubscribed();
 	}
 	
@@ -124,19 +144,28 @@ public class UserController {
 	}
 	
 	@PutMapping("/user/remove/{id}")
-	public void removeUser(@PathVariable long id) throws ResourceDoesntExistException {
-		 this.userService.removeUserById(id);
+	public void removeUser(@PathVariable long id, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+		
+		this.userService.removeUserById(id);
 	}
 	
-	@PostMapping("/logout")
-	public void logout(HttpServletRequest request) throws ResourceDoesntExistException {
-		HttpSession session = request.getSession();
+	@PostMapping("/user/logout")
+	public void logout(HttpSession session) throws ResourceDoesntExistException {
 		
 		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
+		
 		session.invalidate();
 	}
+	
+	
 	
 	
 }

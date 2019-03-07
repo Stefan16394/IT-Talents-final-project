@@ -59,7 +59,9 @@ public class ProductService {
 
 		ListProduct info = new ListProduct(p.getProductId(), p.getTitle(), p.getInformation(), p.getInStock(),
 				p.getDelivery(), p.getDetailedInformation());
-		info.fillReviews(reviews);
+		if(!reviews.isEmpty()) {
+			info.fillReviews(reviews);
+		}
 
 		return info;
 
@@ -83,17 +85,10 @@ public class ProductService {
 		return result;
 	}
 	
-	public List<ListProduct> getAllProductsWithSmallQuantity(){
+	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity(){
 		return this.productRepository.findAll().stream()
 				.filter(product -> product.getProductId() != null && product.getQuantity() < SMALL_QUANTITY_INDICATOR)
-				.map(product -> {
-					try {
-						return getAllInfoForProduct(product.getProductId());
-					} catch (BadCredentialsException e) {
-						e.printStackTrace();
-					}
-					return null;
-				})
+				.map(product -> new ListProductBasicInfo(product.getTitle(), product.getPrice()))
 				.collect(Collectors.toList());
 	}
 
@@ -140,9 +135,11 @@ public class ProductService {
 					try {
 						return getAllInfoForProduct(product.getProductId());
 					} catch (BadCredentialsException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
+						return null;
 					}
-					return null;
+					
 				})
 				.collect(Collectors.toList());
 	}

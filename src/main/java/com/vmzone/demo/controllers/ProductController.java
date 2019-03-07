@@ -2,6 +2,8 @@ package com.vmzone.demo.controllers;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,7 @@ import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.exceptions.VMZoneException;
+import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.ProductInSaleService;
 import com.vmzone.demo.service.ProductService;
 
@@ -34,7 +37,14 @@ public class ProductController {
 	private ProductInSaleService productInSaleService;
 	
 	@PostMapping("/product")
-	public void addProduct(@RequestBody AddProductDTO product) {
+	public void addProduct(@RequestBody AddProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+		
 		this.productService.addProduct(product);
 	}
 	
@@ -43,50 +53,77 @@ public class ProductController {
 	public List<ListProductBasicInfo> getAllproductsForCategory(@RequestParam("categoryId") long id) {
 		return this.productService.getAllproducts(id);
 	}
-	
+	//TODO fix dto
 	@GetMapping("/productsQuantity")
-	public List<ListProduct> getAllProductsWithSmallQuantity() {
+	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
 		return this.productService.getAllProductsWithSmallQuantity();
 	}
 	
 	@PutMapping("/product/remove/{id}")
-	public void removeProduct(@PathVariable long id) throws ResourceDoesntExistException {
+	public void removeProduct(@PathVariable long id, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
 		 this.productService.removeProductById(id);
 	}
 	
 	@PutMapping("/product/edit/{id}")
-	public void editProduct(@PathVariable long id,@RequestBody EditProductDTO product) throws ResourceDoesntExistException {
-			this.productService.editProduct(id,product);
+	public void editProduct(@PathVariable long id,@RequestBody EditProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+		
+		this.productService.editProduct(id,product);
 	}
 	
 	@GetMapping("/products/{id}")
 	public List<ListReview> getReviewsForAProduct(@PathVariable long id) {
 		return this.productService.getReviewsForProduct(id);
 	}
+	//TODO not working for products without reviews
 	@GetMapping("/products")
 	public List<ListProduct> getAllproducts() {
 		return this.productService.getAllproducts();
 	}
-	//TODO needs to be done properly
-	@GetMapping("/productsSort")
-	public List<ListProductBasicInfo> getAllproducts(
-			@RequestParam(name="sortBy", required=false) String sortBy,
-			@RequestParam(name="categoryId", required=false) Long categoryId) {
-		return this.productService.getAllproducts(sortBy, categoryId);
-	}
-
+	
+	//TODO not working for products without reviews
 	@GetMapping("/info/{id}")
 	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
 		return this.productService.getAllInfoForProduct(id);
 	}
-
+	//TODO needs to be done properly
+		@GetMapping("/productsSort")
+		public List<ListProductBasicInfo> getAllproducts(
+				@RequestParam(name="sortBy", required=false) String sortBy,
+				@RequestParam(name="categoryId", required=false) Long categoryId) {
+			return this.productService.getAllproducts(sortBy, categoryId);
+		}
+	//TODO must be a thread
 	@PostMapping("/calculate")
-	public void calculateRating() throws ResourceDoesntExistException {
+	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
 		this.productService.calculateRating();
 	}
 	
 	@PostMapping("/sale")
-	public void addProductInSale(@RequestBody AddProductInSaleDTO product) throws VMZoneException {
+	public void addProductInSale(@RequestBody AddProductInSaleDTO product, HttpSession session) throws VMZoneException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
 		this.productInSaleService.addProductInSale(product);
 	}
 	@GetMapping("/sales")
@@ -94,8 +131,8 @@ public class ProductController {
 		return this.productInSaleService.showProductsInSale();
 	}
 	
-	@GetMapping("/searchPrice/{min}/{max}")
-	public List<ListProductBasicInfo> searchPrice(@PathVariable("min") double min , @PathVariable("max") double max){
+	@GetMapping("/searchPrice")
+	public List<ListProductBasicInfo> searchPrice(@RequestParam("min") double min , @RequestParam("max") double max){
 		return this.productService.searchPrice(min, max);
 	}
 	

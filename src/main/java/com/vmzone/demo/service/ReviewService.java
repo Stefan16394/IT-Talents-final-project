@@ -1,5 +1,6 @@
 package com.vmzone.demo.service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,30 +27,31 @@ public class ReviewService {
 	@Autowired
 	private ProductRepository productRepository;
 
-	public void addReview(AddReviewDTO review) throws ResourceDoesntExistException {
+	public void addReview(AddReviewDTO review, long id) throws ResourceDoesntExistException {
 		try {
 			Review newReview = new Review(this.productRepository.findById(review.getProductId()).get(),
-					this.userRepository.findById(review.getUserId()).get(), review.getReview(), review.getRating());
+					this.userRepository.findById(id).get(), review.getReview(), review.getRating());
 			this.reviewRepository.save(newReview);
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Invalid product or user");
 		}
 	}
 
-	public void removeReviewById(long id) throws ResourceDoesntExistException {
+	public void removeReviewById(long id, long userId) throws ResourceDoesntExistException {
+		List<Review> reviews = this.reviewRepository.findReviewsByUser(userId);
 		Review review = this.reviewRepository.findById(id);
-		if (review == null) {
-			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist");
+		if (review == null || !reviews.contains(review)) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist or it is not your review");
 		}
-		System.out.println("here");
 		review.setIsDeleted(1);
 		this.reviewRepository.save(review);
 	}
 
-	public void editReview(long id, EditReviewDTO editedReview) throws ResourceDoesntExistException {
+	public void editReview(long id, EditReviewDTO editedReview, long userId) throws ResourceDoesntExistException {
+		List<Review> reviews = this.reviewRepository.findReviewsByUser(userId);
 		Review review = this.reviewRepository.findById(id);
-		if (review == null) {
-			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist");
+		if (review == null || !reviews.contains(review)) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist or it is not your review");
 		}
 
 		review.setReview(editedReview.getReview());

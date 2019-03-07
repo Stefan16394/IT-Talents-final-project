@@ -72,5 +72,9 @@ public class User {
 		this.age = age;
 		this.isDeleted = isDeleted;
 	}
+	
+	public boolean isAdmin() {
+		return this.getIsAdmin() == 1;
+	}
 
 }
