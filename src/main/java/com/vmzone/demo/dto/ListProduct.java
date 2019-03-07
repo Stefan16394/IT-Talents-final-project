@@ -21,7 +21,7 @@ public class ListProduct {
 	private String detailedInformation;
 	private Double rating;
 	
-	private List<ListReview> reviews;
+	private List<ListReview> reviews = new LinkedList<>();
 
 	public ListProduct(Long id, String title, String information, int inStock, int delivery, String detailedInformation) {
 		super();
