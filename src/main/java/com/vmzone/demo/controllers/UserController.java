@@ -65,7 +65,6 @@ public class UserController {
         return user;
 	}
 	
-	//TODO should it be without login or not?
 	@GetMapping("/cart")
 	public List<ShoppingCartItem> getShoppingCart(HttpSession session) throws ResourceDoesntExistException {
 		if (session.getAttribute("user") == null) {
