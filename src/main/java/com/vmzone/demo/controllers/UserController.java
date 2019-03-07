@@ -72,7 +72,6 @@ public class UserController {
 		}
 		return this.userService.getShoppingCart(((User) session.getAttribute("user")).getUserId());
 	}
-
 	
 	@PostMapping("/product/cart")
 	public void addProductToCart(@RequestBody CartProductDTO addProduct, HttpSession session) throws ResourceDoesntExistException {

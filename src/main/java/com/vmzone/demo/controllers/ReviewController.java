@@ -44,6 +44,4 @@ public class ReviewController {
 		}	
 		this.reviewService.editReview(id, review, ((User) session.getAttribute("user")).getUserId());
 	}
-	
-	
 }

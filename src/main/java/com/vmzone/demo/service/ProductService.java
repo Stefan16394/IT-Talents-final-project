@@ -35,7 +35,6 @@ public class ProductService {
 	private ReviewRepository reviewRepository;
 
 	public void addProduct(AddProductDTO product) {
-		System.out.println(product);
 		Product newProduct = new Product(
 				this.categoryService.categoryRepository.findById(product.getCategoryId()).get(), product.getTitle(),
 				product.getInformation(), product.getInStock(), product.getDelivery(), product.getQuantity(),
