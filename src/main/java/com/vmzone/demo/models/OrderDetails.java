@@ -25,6 +25,7 @@ public class OrderDetails {
 	private Long orderDetailsId;
 	private int quantity;
 	private Long orderId;
+	
 	@ManyToOne
 	@JoinColumn(name="product_id")
 	private Product product;
