@@ -41,7 +41,6 @@ public class ReviewService {
 		if (review == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist");
 		}
-		System.out.println("here");
 		review.setIsDeleted(1);
 		this.reviewRepository.save(review);
 	}

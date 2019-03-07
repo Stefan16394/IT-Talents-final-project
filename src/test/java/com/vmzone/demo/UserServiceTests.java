@@ -51,11 +51,11 @@ public class UserServiceTests {
 	@Mock
 	private UserRepository userRepository;
 
-	@InjectMocks
-	private UserService userService;
-
 	@Mock
 	private PasswordEncoder bCryptPasswordEncoder;
+	
+	@InjectMocks
+	private UserService userService;
 
 	@Before
 	public void init() {

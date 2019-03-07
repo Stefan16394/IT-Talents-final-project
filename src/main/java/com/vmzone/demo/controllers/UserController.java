@@ -69,7 +69,6 @@ public class UserController {
 	public List<ShoppingCartItem> getShoppingCart(@PathVariable long id) {
 		return this.userService.getShoppingCart(id);
 	}
-
 	
 	@PostMapping("/product/cart")
 	public void addProductToCart(@RequestBody CartProductDTO addProduct) {

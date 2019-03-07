@@ -31,6 +31,4 @@ public class ReviewController {
 	public void editReview(@PathVariable long id,@RequestBody EditReviewDTO review) throws ResourceDoesntExistException {
 			this.reviewService.editReview(id, review);
 	}
-	
-	
 }
