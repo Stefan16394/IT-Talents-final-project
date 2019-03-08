@@ -60,6 +60,17 @@ public class ProductController {
 		
 		this.productService.addCharacteristicForProduct(productId, characteristic);
 	}
+	@PostMapping("/product/remove/characteristic/{prodId}/{charId}")
+	public void removeCharacteristicForProduct(@PathVariable("prodId") Long prodId, @PathVariable("charId") Long charId , HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+		
+		this.productService.removeCharacteristicForProduct(prodId, charId);
+	}
 	
 	// http://localhost:8080/product/?categoryId=1 Така се тества!
 	@GetMapping("/product")

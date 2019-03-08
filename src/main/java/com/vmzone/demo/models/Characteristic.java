@@ -32,6 +32,7 @@ public class Characteristic {
 	
 	private String name;
 	private String value;
+	private int isDeleted;
 	
 	public Characteristic(Product product, String name, String value) {
 		this.product = product;

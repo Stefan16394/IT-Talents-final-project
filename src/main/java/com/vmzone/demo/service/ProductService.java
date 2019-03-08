@@ -73,6 +73,16 @@ public class ProductService {
 		this.characteristicRepository.save(newCharacteristic);
 	}
 	
+	public void removeCharacteristicForProduct(long prodId, long charactId) throws ResourceDoesntExistException {
+		
+		Characteristic characteristic = this.characteristicRepository.findCharacteristicForProduct(prodId, charactId);
+		if(characteristic == null) {
+			throw new ResourceDoesntExistException("There is no such characteristic for this product");
+		}
+		characteristic.setIsDeleted(1);
+		this.characteristicRepository.save(characteristic);	
+	}
+	
 
 	public List<ListReview> getReviewsForProduct(long id) {
 		return this.reviewRepository.findAll().stream()
