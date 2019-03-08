@@ -38,9 +38,8 @@ public class ReviewService {
 	}
 
 	public void removeReviewById(long id, long userId) throws ResourceDoesntExistException {
-		List<Review> reviews = this.reviewRepository.findReviewsByUser(userId);
-		Review review = this.reviewRepository.findById(id);
-		if (review == null || !reviews.contains(review)) {
+		Review review = this.reviewRepository.findReviewForUser(userId, id);
+		if (review == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist or it is not your review");
 		}
 		review.setIsDeleted(1);
@@ -48,9 +47,8 @@ public class ReviewService {
 	}
 
 	public void editReview(long id, EditReviewDTO editedReview, long userId) throws ResourceDoesntExistException {
-		List<Review> reviews = this.reviewRepository.findReviewsByUser(userId);
-		Review review = this.reviewRepository.findById(id);
-		if (review == null || !reviews.contains(review)) {
+		Review review = this.reviewRepository.findReviewForUser(userId, id);
+		if (review == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist or it is not your review");
 		}
 

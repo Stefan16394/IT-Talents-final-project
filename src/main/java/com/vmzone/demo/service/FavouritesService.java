@@ -36,10 +36,10 @@ public class FavouritesService {
 	}
 	
 	public void removeFavouriteById(long id, long userId) throws ResourceDoesntExistException {
-		List<Favourite> list = this.favouritesRepository.findFavouritesByUser(userId);
-		Favourite fav = this.favouritesRepository.findById(id);
 		
-		if(fav == null || !list.contains(fav)) {
+		Favourite fav = this.favouritesRepository.findFavouriteFoUser(userId,id);
+		
+		if(fav == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
 		}
 		fav.setIsDeleted(1);

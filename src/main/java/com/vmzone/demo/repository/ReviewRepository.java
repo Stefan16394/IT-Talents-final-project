@@ -14,6 +14,6 @@ import com.vmzone.demo.models.Review;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 	Review findById(long id);
 	
-	@Query(value = "select * from reviews where user_id = :id", nativeQuery = true)
-	List<Review> findReviewsByUser(@Param("id") long id);
+	@Query(value = "select * from reviews where user_id = :id and review_id = :revId", nativeQuery = true)
+	Review findReviewForUser(@Param("id") long id, @Param("revId") long revId);
 }

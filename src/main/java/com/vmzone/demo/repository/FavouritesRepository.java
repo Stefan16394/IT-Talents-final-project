@@ -14,6 +14,6 @@ import com.vmzone.demo.models.Favourite;
 public interface FavouritesRepository extends JpaRepository<Favourite, Long> {
 	Favourite findById(long id);
 	
-	@Query(value = "select * from favourites where user_id = :id", nativeQuery = true)
-	List<Favourite> findFavouritesByUser(@Param("id") long id);
+	@Query(value = "select * from favourites where favourites_id = :favId and user_id = :id", nativeQuery = true)
+	Favourite findFavouriteFoUser(@Param("id") long id, @Param("favId") long favId);
 }
