@@ -11,6 +11,7 @@ import com.vmzone.demo.dto.AddCategoryDTO;
 import com.vmzone.demo.dto.ListCategory;
 import com.vmzone.demo.dto.ListFinalSubCategories;
 import com.vmzone.demo.dto.ListSubCategory;
+import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.models.Category;
 import com.vmzone.demo.repository.CategoryRepository;
 
@@ -37,7 +38,11 @@ public class CategoryService {
 		return categ;
 	}
 
-	public void createCategory(AddCategoryDTO category) {
+	public void createCategory(AddCategoryDTO category) throws ResourceAlreadyExistsException {
+		Category checkExists = this.categoryRepository.findByName(category.getName());
+		if(checkExists != null) {
+			throw new ResourceAlreadyExistsException("This category already exists!");
+		}
 		Category newCategory = new Category(category.getName(), category.getParent_id() == null ? null
 				: this.categoryRepository.findById(category.getParent_id()).get());
 		this.categoryRepository.save(newCategory);

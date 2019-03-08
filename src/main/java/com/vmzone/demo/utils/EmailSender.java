@@ -23,9 +23,10 @@ public class EmailSender {
 	public static final String EMAIL = "vmzona.noreply@gmail.com";
 	private static final String PASS = "vmzona123456";
 	
-	public static String forgottenPassword(String email) throws AddressException, InvalidEmailException, MessagingException, IOException {
-		String newPass = EmailConstantsHelper.forgottenPassword();
-		sendEmail(email, EmailConstantsHelper.SUBJECT_FORGOTTEN_PASSWORD, newPass);
+	public static String forgottenPassword(String email, String newPass) throws AddressException, InvalidEmailException, MessagingException, IOException {
+		
+		String message = EmailConstantsHelper.forgottenPassword(newPass);
+		sendEmail(email, EmailConstantsHelper.SUBJECT_FORGOTTEN_PASSWORD, message);
 		
 		return newPass;
 	}

@@ -24,4 +24,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 				"			LEFT JOIN categories c ON cp.id=c.parent_id \r\n" + 
 				"			WHERE c.category_id IS NULL", nativeQuery=true)
 	List<Object> getLeafCategories(@Param("id") long id);
+	
+	Category findByName(String name);
 }
