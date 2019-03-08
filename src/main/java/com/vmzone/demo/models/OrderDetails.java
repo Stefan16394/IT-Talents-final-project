@@ -21,7 +21,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class OrderDetails {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long orderDetailsId;
 	private int quantity;
 	private Long orderId;

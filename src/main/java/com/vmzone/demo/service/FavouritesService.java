@@ -1,6 +1,7 @@
 package com.vmzone.demo.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,17 @@ public class FavouritesService {
 	@Autowired
 	private ProductRepository productRepository;
 	
-	public void addToFavourites(AddToFavouritesDTO fav, long id ) {
+	public void addToFavourites(AddToFavouritesDTO fav, long id ) throws ResourceDoesntExistException {
 		System.out.println(fav);
+		try {
 		Favourite newFav = new Favourite(
 				this.productRepository.findById(fav.getProductId()).get(),
 				this.userRepository.findById(id).get());
 		this.favouritesRepository.save(newFav);
+		}
+		catch(NoSuchElementException e) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product or user doesnt exist.");
+		}
 	}
 	
 	public void removeFavouriteById(long id, long userId) throws ResourceDoesntExistException {
@@ -47,12 +53,9 @@ public class FavouritesService {
 	}
 	
 	public List<ListFavouriteProductDTO> getFavouritesForUser(long id) {
-		return this.favouritesRepository.findAll().stream()
-				.filter(fav -> fav.getFavouritesId() != null && fav.getUser().getUserId().equals(id))
+		return this.favouritesRepository.findFavouritesForUser(id).stream()
 				.map(fav -> new ListFavouriteProductDTO(fav.getProduct().getTitle(), fav.getProduct().getInformation(), fav.getProduct().getRating()))
 				.collect(Collectors.toList());
 	}
 	
-	
-
 }
