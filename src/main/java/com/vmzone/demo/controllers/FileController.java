@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.FileStorageService;
+import com.vmzone.demo.utils.SessionManager;
 
 @RestController
 public class FileController {
@@ -42,11 +44,11 @@ public class FileController {
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id, HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException {
     	
-    	if (session.getAttribute("user") == null) {
-			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+    	if (!SessionManager.isUserLoggedIn(session)) {
+			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
-		if(!((User) session.getAttribute("user")).isAdmin()) {
-			throw new BadCredentialsException("You do not have access to this feature!");
+		if(!SessionManager.isAdmin(session)) {
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You do not have access to this feature!");
 		}
     	
         String fileName = fileStorageService.storeFile(file, id);
@@ -63,11 +65,11 @@ public class FileController {
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("id") Long id, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
        
-    	if (session.getAttribute("user") == null) {
-			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+    	if (!SessionManager.isUserLoggedIn(session)) {
+			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
-		if(!((User) session.getAttribute("user")).isAdmin()) {
-			throw new BadCredentialsException("You do not have access to this feature!");
+		if(!SessionManager.isAdmin(session)) {
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You do not have access to this feature!");
 		}
     	
     	return Arrays.asList(files)

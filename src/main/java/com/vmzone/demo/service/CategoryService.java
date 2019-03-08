@@ -31,7 +31,7 @@ public class CategoryService {
 	}
 
 
-	public void createCategory(AddCategoryDTO category) throws ResourceAlreadyExistsException {
+	public long createCategory(AddCategoryDTO category) throws ResourceAlreadyExistsException {
 		Category checkExists = this.categoryRepository.findByName(category.getName());
 		if(checkExists != null) {
 			throw new ResourceAlreadyExistsException("This category already exists!");
@@ -39,6 +39,7 @@ public class CategoryService {
 		Category newCategory = new Category(category.getName(), category.getParent_id() == null ? null
 				: this.categoryRepository.findById(category.getParent_id()).get());
 		this.categoryRepository.save(newCategory);
+		return newCategory.getCategoryId();
 	}
 
 	public List<ListSubCategory> getSubcategoriesForCategory(long id) {

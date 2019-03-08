@@ -28,13 +28,14 @@ public class FavouritesService {
 	@Autowired
 	private ProductRepository productRepository;
 	
-	public void addToFavourites(AddToFavouritesDTO fav, long id ) throws ResourceDoesntExistException {
+	public long addToFavourites(AddToFavouritesDTO fav, long id ) throws ResourceDoesntExistException {
 		System.out.println(fav);
 		try {
 		Favourite newFav = new Favourite(
 				this.productRepository.findById(fav.getProductId()).get(),
 				this.userRepository.findById(id).get());
 		this.favouritesRepository.save(newFav);
+		return newFav.getFavouritesId();
 		}
 		catch(NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product or user doesnt exist.");

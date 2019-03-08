@@ -43,7 +43,7 @@ public class ProductService {
 	@Autowired
 	private CharacteristicsRepository characteristicRepository;
 
-	public void addProduct(AddProductDTO product) throws ResourceDoesntExistException {
+	public long addProduct(AddProductDTO product) throws ResourceDoesntExistException {
 			try{
 				this.categoryService.categoryRepository.findById(product.getCategoryId()).get();	
 			}catch(NoSuchElementException e){
@@ -55,9 +55,10 @@ public class ProductService {
 				product.getInformation(), product.getInStock(), product.getDelivery(), product.getQuantity(),
 				product.getInSale(), product.getDetailedInformation());
 		this.productRepository.save(newProduct);
+		return newProduct.getProductId();
 	}
 	
-	public void addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic) throws ResourceAlreadyExistsException, ResourceDoesntExistException {
+	public long addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic) throws ResourceAlreadyExistsException, ResourceDoesntExistException {
 		Characteristic checkExists = this.characteristicRepository.findNameOfCharacteristicForProduct(productId, characteristic.getValue());
 		if(checkExists != null) {
 			throw new ResourceAlreadyExistsException("There is already a characteristic with that name for this product");
@@ -72,6 +73,7 @@ public class ProductService {
 				characteristic.getName(),
 				characteristic.getValue());
 		this.characteristicRepository.save(newCharacteristic);
+		return newCharacteristic.getCharacteristicsId();
 	}
 	
 	public void removeCharacteristicForProduct(long prodId, long charactId) throws ResourceDoesntExistException {
@@ -159,7 +161,7 @@ public class ProductService {
 	}
 
 
-	public void editProduct( long id ,EditProductDTO editedProduct) throws ResourceDoesntExistException {
+	public long editProduct( long id ,EditProductDTO editedProduct) throws ResourceDoesntExistException {
 		Product product = this.productRepository.findById(id).get();
 		if(product == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
@@ -178,7 +180,7 @@ public class ProductService {
 		product.setTitle(editedProduct.getTitle());
 
 		this.productRepository.save(product);
-
+		return product.getProductId();
 	}
 	
 	public List<ListProduct> getAllproducts(){
