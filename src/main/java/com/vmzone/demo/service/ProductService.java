@@ -31,7 +31,8 @@ public class ProductService {
 	private static final int SMALL_QUANTITY_INDICATOR = 10;
 
 
-	@Autowired ProductRepository productRepository;
+	@Autowired 
+	ProductRepository productRepository;
 
 	@Autowired
 	private CategoryService categoryService;
@@ -195,7 +196,7 @@ public class ProductService {
 				})
 				.collect(Collectors.toList());
 	}
-	//TODO do for colour and size
+	
 	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId){
 		return this.productRepository.findAll().stream()
 				.filter(product -> categoryId == null || product.getCategory().getCategoryId().equals(categoryId))
@@ -214,6 +215,20 @@ public class ProductService {
 					}
 				})
 				.map(product -> new ListProductBasicInfo(product.getProductId(), product.getTitle(), product.getPrice(), product.getDate()))
+				.collect(Collectors.toList());
+	}
+	
+	public List<ListProductBasicInfo> sortCharacteristicsByColour(String sortBy, Long categoryId){
+		return this.characteristicRepository.findCharacteristicWithColourAndValue(sortBy).stream()
+				.filter(charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
+				.map(charact -> new ListProductBasicInfo(charact.getProduct().getProductId(), charact.getProduct().getTitle(), charact.getProduct().getPrice(), charact.getProduct().getDate()))
+				.collect(Collectors.toList());
+	}
+	
+	public List<ListProductBasicInfo> sortCharacteristicsBySize(String sortBy, Long categoryId){
+		return this.characteristicRepository.findCharacteristicWithSizeAndValue(sortBy).stream()
+				.filter(charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
+				.map(charact -> new ListProductBasicInfo(charact.getProduct().getProductId(), charact.getProduct().getTitle(), charact.getProduct().getPrice(), charact.getProduct().getDate()))
 				.collect(Collectors.toList());
 	}
 	

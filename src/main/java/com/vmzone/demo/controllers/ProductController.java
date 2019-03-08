@@ -164,6 +164,20 @@ public class ProductController {
 	public List<ListProductBasicInfo> search(@RequestParam("search") String str){
 		return this.productService.searchTitle(str);
 	}
+	
+	@GetMapping("/filter/colour")
+	public List<ListProductBasicInfo> searchByColour(
+			@RequestParam(name="sortBy", required=false) String sortBy,
+			@RequestParam(name="categoryId", required=false) Long categoryId){
+		return this.productService.sortCharacteristicsByColour(sortBy, categoryId);
+	}
+	
+	@GetMapping("/filter/size")
+	public List<ListProductBasicInfo> searchBySize(
+			@RequestParam(name="sortBy", required=false) String sortBy,
+			@RequestParam(name="categoryId", required=false) Long categoryId){
+		return this.productService.sortCharacteristicsBySize(sortBy, categoryId);
+	}
 
 	
 	
