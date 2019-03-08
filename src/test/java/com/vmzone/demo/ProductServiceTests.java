@@ -105,7 +105,7 @@ public class ProductServiceTests {
 		 
 	}
 	
-	@Test(expected = ResourceDoesntExistException.class)
+	@Test
 	public void testEditProductWithCorrectInput() throws ResourceDoesntExistException {
 		EditProductDTO edit = new EditProductDTO(DEFAULT_ID_TO_SEARCH, "editedTitle", "editedInfo", 1, 20, 23, 0, 1, "editedInfo");
 		when(productRepository.findById(DEFAULT_ID_TO_SEARCH)).thenReturn(Optional.of(TEST_PRODUCT));
@@ -122,6 +122,8 @@ public class ProductServiceTests {
 		assertEquals(edit.getQuantity(),TEST_PRODUCT.getQuantity());
 		assertEquals(edit.getTitle(),TEST_PRODUCT.getTitle());
 	}
+	
+
 	
 	@Configuration
 	static class Config {
