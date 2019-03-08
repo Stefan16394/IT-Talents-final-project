@@ -33,6 +33,7 @@ import com.vmzone.demo.dto.RegisterDTO;
 import com.vmzone.demo.dto.ShoppingCartItem;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.InvalidEmailException;
+import com.vmzone.demo.exceptions.NotEnoughQuantityException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
@@ -74,7 +75,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/product/cart")
-	public void addProductToCart(@RequestBody CartProductDTO addProduct, HttpSession session) throws ResourceDoesntExistException {
+	public void addProductToCart(@RequestBody CartProductDTO addProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException {
 		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
@@ -82,7 +83,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/product/cart/update")
-	public void updateProductInCart(@RequestBody CartProductDTO editProduct, HttpSession session) throws ResourceDoesntExistException {
+	public void updateProductInCart(@RequestBody CartProductDTO editProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException {
 		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}

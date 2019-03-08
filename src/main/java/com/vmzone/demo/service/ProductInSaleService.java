@@ -37,7 +37,7 @@ public class ProductInSaleService {
 		Product prod = this.productRepository.findById(sale.getProductId()).get();
 		prod.setInSale(1);
 		ProductInSale newProductInSale = new ProductInSale(
-				this.productRepository.findById(sale.getProductId()).get(),
+				prod,
 				sale.getStartDate(),
 				sale.getEndDate(),
 				sale.getDiscountPercentage()

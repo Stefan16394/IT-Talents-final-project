@@ -26,9 +26,12 @@ import com.vmzone.demo.dto.RegisterDTO;
 import com.vmzone.demo.dto.ShoppingCartItem;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.InvalidEmailException;
+import com.vmzone.demo.exceptions.NotEnoughQuantityException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.User;
+import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.UserRepository;
 import com.vmzone.demo.utils.EmailSender;
 import com.vmzone.demo.utils.PasswordGenerator;
@@ -39,6 +42,9 @@ public class UserService {
 	private static final int LENGTH_FOR_FORGOTTEN_PASSWORD = 8;
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private ProductRepository productRepository;
 
 	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
@@ -168,11 +174,19 @@ public class UserService {
 		return items;
 	}
 	
-	public void addProductToCart(CartProductDTO addProduct, long id) {
+	public void addProductToCart(CartProductDTO addProduct, long id) throws NotEnoughQuantityException {
+		Product p = this.productRepository.findById(addProduct.getProductId()).get();
+		if(p.getQuantity() < addProduct.getQuantity()) {
+			throw new NotEnoughQuantityException("There is not enough quantity of this product! Try with less or add it to you cart later.");
+		}
 		this.userRepository.addProductToCart(addProduct.getProductId(), addProduct.getQuantity(), id);
 	}
 	
-	public void updateProductInCart(CartProductDTO editProduct, long id) {
+	public void updateProductInCart(CartProductDTO editProduct, long id) throws NotEnoughQuantityException {
+		Product p = this.productRepository.findById(editProduct.getProductId()).get();
+		if(p.getQuantity() < editProduct.getQuantity()) {
+			throw new NotEnoughQuantityException("There is not enough quantity of this product! Try with less or add it to you cart later.");
+		}
 		this.userRepository.updateProductInCart(editProduct.getProductId(), editProduct.getQuantity(), id);
 	}
 

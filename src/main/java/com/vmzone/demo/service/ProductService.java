@@ -31,7 +31,8 @@ public class ProductService {
 	private static final int SMALL_QUANTITY_INDICATOR = 10;
 
 
-	@Autowired ProductRepository productRepository;
+	@Autowired 
+	ProductRepository productRepository;
 
 	@Autowired
 	private CategoryService categoryService;
@@ -195,7 +196,7 @@ public class ProductService {
 				})
 				.collect(Collectors.toList());
 	}
-	//TODO do for colour and size
+	
 	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId){
 		return this.productRepository.findAll().stream()
 				.filter(product -> categoryId == null || product.getCategory().getCategoryId().equals(categoryId))
