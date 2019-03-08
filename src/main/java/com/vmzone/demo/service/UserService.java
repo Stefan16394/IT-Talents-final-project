@@ -49,7 +49,7 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
 
-	public void register(RegisterDTO user) throws SQLException, ResourceAlreadyExistsException, AddressException,
+	public long register(RegisterDTO user) throws SQLException, ResourceAlreadyExistsException, AddressException,
 			InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(user.getEmail());
 		if (u != null) {
@@ -63,6 +63,7 @@ public class UserService {
 				0);
 		this.userRepository.save(newUser);
 		EmailSender.registration(user.getEmail());
+		return newUser.getUserId();
 	}
 
 	public User login(LoginDTO loginDTO) throws ResourceDoesntExistException, BadCredentialsException {
@@ -174,20 +175,22 @@ public class UserService {
 		return items;
 	}
 	
-	public void addProductToCart(CartProductDTO addProduct, long id) throws NotEnoughQuantityException {
+	public long addProductToCart(CartProductDTO addProduct, long id) throws NotEnoughQuantityException {
 		Product p = this.productRepository.findById(addProduct.getProductId()).get();
 		if(p.getQuantity() < addProduct.getQuantity()) {
 			throw new NotEnoughQuantityException("There is not enough quantity of this product! Try with less or add it to you cart later.");
 		}
 		this.userRepository.addProductToCart(addProduct.getProductId(), addProduct.getQuantity(), id);
+		return addProduct.getProductId();
 	}
 	
-	public void updateProductInCart(CartProductDTO editProduct, long id) throws NotEnoughQuantityException {
+	public long updateProductInCart(CartProductDTO editProduct, long id) throws NotEnoughQuantityException {
 		Product p = this.productRepository.findById(editProduct.getProductId()).get();
 		if(p.getQuantity() < editProduct.getQuantity()) {
 			throw new NotEnoughQuantityException("There is not enough quantity of this product! Try with less or add it to you cart later.");
 		}
 		this.userRepository.updateProductInCart(editProduct.getProductId(), editProduct.getQuantity(), id);
+		return editProduct.getProductId();
 	}
 
 	public void deleteProductInCart(long productId, long userId) {

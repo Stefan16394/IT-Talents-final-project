@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.CategoryService;
+import com.vmzone.demo.utils.SessionManager;
 
 @RestController
 public class CategoryController {
@@ -31,14 +33,14 @@ public class CategoryController {
 	}
 
 	@PostMapping("/category")
-	public void createCategory(@RequestBody AddCategoryDTO category, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
-		if (session.getAttribute("user") == null) {
-			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+	public long createCategory(@RequestBody AddCategoryDTO category, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
+		if (!SessionManager.isUserLoggedIn(session)) {
+			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
-		if(!((User) session.getAttribute("user")).isAdmin()) {
-			throw new BadCredentialsException("You do not have access to this feature!");
+		if(!SessionManager.isAdmin(session)) {
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
 		}
-		this.categoryService.createCategory(category);
+		return this.categoryService.createCategory(category);
 	}
 	
 	

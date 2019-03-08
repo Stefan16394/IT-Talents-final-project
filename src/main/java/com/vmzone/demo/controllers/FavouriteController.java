@@ -19,6 +19,7 @@ import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.FavouritesService;
+import com.vmzone.demo.utils.SessionManager;
 
 @RestController
 public class FavouriteController {
@@ -27,27 +28,27 @@ public class FavouriteController {
 	FavouritesService favouritesService;
 	
 	@PostMapping("/favourite")
-	public void addFavourite(@RequestBody AddToFavouritesDTO fav, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
-		if (session.getAttribute("user") == null) {
+	public long addFavourite(@RequestBody AddToFavouritesDTO fav, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You are not logged in! You should log in first!");
 		}
-		this.favouritesService.addToFavourites(fav, ((User) session.getAttribute("user")).getUserId());
+		return this.favouritesService.addToFavourites(fav, SessionManager.getLoggedUserId(session));
 	}
 	
 	@PutMapping("/favourites/remove/{id}")
 	public void removeFavourite(@PathVariable long id, HttpSession session) throws BadCredentialsException, ResourceDoesntExistException {
-		if (session.getAttribute("user") == null) {
+		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You are not logged in! You should log in first!");
 		}
-		 this.favouritesService.removeFavouriteById(id, ((User) session.getAttribute("user")).getUserId());
+		 this.favouritesService.removeFavouriteById(id, SessionManager.getLoggedUserId(session));
 	}
 	
 	@GetMapping("/favourites")
 	public List<ListFavouriteProductDTO> getFavouritesForUser(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
-		if (session.getAttribute("user") == null) {
+		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You are not logged in! You should log in first!");
 		}
-		return this.favouritesService.getFavouritesForUser(((User) session.getAttribute("user")).getUserId());
+		return this.favouritesService.getFavouritesForUser(SessionManager.getLoggedUserId(session));
 	}
 
 }

@@ -46,7 +46,8 @@ public class ProductService {
 	@Autowired
 	private CharacteristicsRepository characteristicRepository;
 
-	public void addProduct(AddProductDTO product) throws ResourceDoesntExistException {
+
+	public long addProduct(AddProductDTO product) throws ResourceDoesntExistException {
 		Category category = null;
 		try {
 			category = this.categoryRepository.findById(product.getCategoryId()).get();
@@ -55,11 +56,13 @@ public class ProductService {
 		}
 		Product newProduct = new Product(category, product.getTitle(), product.getInformation(), product.getInStock(),
 				product.getDelivery(), product.getQuantity(), product.getInSale(), product.getDetailedInformation());
+		
 		this.productRepository.save(newProduct);
+		return newProduct.getProductId();
 	}
 
-	public void addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic)
-			throws ResourceAlreadyExistsException, ResourceDoesntExistException {
+	
+	public long addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic) throws ResourceAlreadyExistsException, ResourceDoesntExistException {
 		Characteristic checkExists = this.characteristicRepository.findNameOfCharacteristicForProduct(productId,
 				characteristic.getValue());
 		if (checkExists != null) {
@@ -71,9 +74,11 @@ public class ProductService {
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException("There is no such category");
 		}
+	
 		Characteristic newCharacteristic = new Characteristic(this.productRepository.findById(productId).get(),
 				characteristic.getName(), characteristic.getValue());
 		this.characteristicRepository.save(newCharacteristic);
+		return newCharacteristic.getCharacteristicsId();
 	}
 
 	public void removeCharacteristicForProduct(long prodId, long charactId) throws ResourceDoesntExistException {
@@ -156,15 +161,15 @@ public class ProductService {
 		this.productRepository.save(product);
 	}
 
-	public void editProduct(long id, EditProductDTO editedProduct) throws ResourceDoesntExistException {
 
+	public long editProduct( long id ,EditProductDTO editedProduct) throws ResourceDoesntExistException {
 		Product product = null;
 		try {
 			product = this.productRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
 		}
-
+	
 		Category cat = null;
 		try {
 			cat = this.categoryRepository.findById(editedProduct.getCategoryId()).get();
@@ -182,7 +187,7 @@ public class ProductService {
 		product.setTitle(editedProduct.getTitle());
 
 		this.productRepository.save(product);
-
+		return product.getProductId();
 	}
 
 	public List<ListProduct> getAllproducts() {

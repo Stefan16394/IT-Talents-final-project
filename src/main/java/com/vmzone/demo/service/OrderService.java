@@ -38,7 +38,7 @@ public class OrderService {
 	private UserService userService;
 
 	@Transactional(rollbackOn = Exception.class)
-	public void createNewOrder(User user) throws ResourceDoesntExistException, BadRequestException {
+	public long createNewOrder(User user) throws ResourceDoesntExistException, BadRequestException {
 		List<ShoppingCartItem> items = this.userService.getShoppingCart(user.getUserId());
 		if (items.isEmpty()) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "You shopping cart is empty.");
@@ -51,6 +51,7 @@ public class OrderService {
 				OrderDetails orderDetail = new OrderDetails(item.getQuantity(), order.getOrderId(), p);
 				this.orderDetailsRepository.save(orderDetail);
 			}
+			return order.getOrderId();
 		} catch (Exception e) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Transaction failed.");
 		}
