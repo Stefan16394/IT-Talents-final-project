@@ -26,4 +26,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	List<Object> getLeafCategories(@Param("id") long id);
 	
 	Category findByName(String name);
+	
 }

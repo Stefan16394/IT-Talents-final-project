@@ -3,21 +3,26 @@ package com.vmzone.demo.service;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.vmzone.demo.dto.AddCharacteristicDTO;
 import com.vmzone.demo.dto.AddProductDTO;
 import com.vmzone.demo.dto.EditProductDTO;
 import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListProductBasicInfo;
 import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Category;
+import com.vmzone.demo.models.Characteristic;
 import com.vmzone.demo.models.Product;
+import com.vmzone.demo.repository.CharacteristicsRepository;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;
 
@@ -33,19 +38,63 @@ public class ProductService {
 
 	@Autowired
 	private ReviewRepository reviewRepository;
+	
+	@Autowired
+	private CharacteristicsRepository characteristicRepository;
 
-	public void addProduct(AddProductDTO product) {
+	public void addProduct(AddProductDTO product) throws ResourceDoesntExistException {
+			try{
+				this.categoryService.categoryRepository.findById(product.getCategoryId()).get();	
+			}catch(NoSuchElementException e){
+				throw new ResourceDoesntExistException("There is no such category");
+			}
 		Product newProduct = new Product(
-				this.categoryService.categoryRepository.findById(product.getCategoryId()).get(), product.getTitle(),
+				this.categoryService.categoryRepository.findById(product.getCategoryId()).get(), 
+				product.getTitle(),
 				product.getInformation(), product.getInStock(), product.getDelivery(), product.getQuantity(),
 				product.getInSale(), product.getDetailedInformation());
 		this.productRepository.save(newProduct);
 	}
+	
+	public void addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic) throws ResourceAlreadyExistsException, ResourceDoesntExistException {
+		Characteristic checkExists = this.characteristicRepository.findNameOfCharacteristicForProduct(productId, characteristic.getValue());
+		if(checkExists != null) {
+			throw new ResourceAlreadyExistsException("There is already a characteristic with that name for this product");
+		}
+		try {
+			this.productRepository.findById(productId).get();
+		} catch(NoSuchElementException e) {
+			throw new ResourceDoesntExistException("There is no such category");
+		}
+		Characteristic newCharacteristic = new Characteristic(
+				this.productRepository.findById(productId).get(),
+				characteristic.getName(),
+				characteristic.getValue());
+		this.characteristicRepository.save(newCharacteristic);
+	}
+	
+	public void removeCharacteristicForProduct(long prodId, long charactId) throws ResourceDoesntExistException {
+		
+		Characteristic characteristic = this.characteristicRepository.findCharacteristicForProduct(prodId, charactId);
+		if(characteristic == null) {
+			throw new ResourceDoesntExistException("There is no such characteristic for this product");
+		}
+		characteristic.setIsDeleted(1);
+		this.characteristicRepository.save(characteristic);	
+	}
+	
 
 	public List<ListReview> getReviewsForProduct(long id) {
 		return this.reviewRepository.findAll().stream()
 				.filter(review -> review.getReviewId() != null && review.getProduct().getProductId().equals(id))
 				.map(review -> new ListReview(review.getReviewId(), review.getReview(), review.getRating()))
+				.collect(Collectors.toList());
+	}
+	
+	public List<AddCharacteristicDTO> getCharacteristicsForProduct(long id) {
+		return this.characteristicRepository.findAll().stream()
+				.filter(charact -> charact.getCharacteristicsId() != null && charact.getProduct().getProductId().equals(id))
+				.map(charact -> new AddCharacteristicDTO(charact.getName(), charact.getValue()))
 				.collect(Collectors.toList());
 	}
 
@@ -55,11 +104,15 @@ public class ProductService {
 			throw new BadCredentialsException();
 		}
 		List<ListReview> reviews = getReviewsForProduct(id);
+		List<AddCharacteristicDTO> characteristics = getCharacteristicsForProduct(id);
 
 		ListProduct info = new ListProduct(p.getProductId(), p.getTitle(), p.getInformation(), p.getInStock(),
 				p.getDelivery(), p.getDetailedInformation());
 		if(!reviews.isEmpty()) {
 			info.fillReviews(reviews);
+		}
+		if(!characteristics.isEmpty()) {
+			info.fillCharacteristics(characteristics);
 		}
 
 		return info;

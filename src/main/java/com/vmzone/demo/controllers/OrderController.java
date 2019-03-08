@@ -31,12 +31,12 @@ public class OrderController {
 		this.orderService.createNewOrder(user);
 	}
 
-	@GetMapping("/orders/{id}")
-	public List<OrderBasicInfo> getAllOrdersForUser(@PathVariable long id,HttpSession session) throws BadCredentialsException {
-		if (session.getAttribute("user") == null || ((User) session.getAttribute("user")).getUserId()!=id) {
+	@GetMapping("/orders")
+	public List<OrderBasicInfo> getAllOrdersForUser(HttpSession session) throws BadCredentialsException {
+		if (session.getAttribute("user") == null) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"Unauthorized: Access is denied due to invalid credentials.");
 		}
-		return this.orderService.getAllOrdersForUser(id);
+		return this.orderService.getAllOrdersForUser(((User) session.getAttribute("user")).getUserId());
 	}
 
 	@GetMapping("/order/{id}")

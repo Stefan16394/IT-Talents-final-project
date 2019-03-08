@@ -22,6 +22,7 @@ public class ListProduct {
 	private Double rating;
 	
 	private List<ListReview> reviews = new LinkedList<>();
+	private List<AddCharacteristicDTO> characteristics = new LinkedList<>();
 
 	public ListProduct(Long id, String title, String information, int inStock, int delivery, String detailedInformation) {
 		super();
@@ -38,6 +39,13 @@ public class ListProduct {
 	
 	public List<ListReview> getReviews(){
 		return Collections.unmodifiableList(this.reviews);
+	}
+
+	public void fillCharacteristics(List<AddCharacteristicDTO> characteristics) {
+		if(characteristics != null && !characteristics.isEmpty()) {
+			this.characteristics = new LinkedList<AddCharacteristicDTO>(characteristics);
+		}
+		
 	}
 	
 

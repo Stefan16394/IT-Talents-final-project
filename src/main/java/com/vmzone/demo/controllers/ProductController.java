@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vmzone.demo.dto.AddCharacteristicDTO;
 import com.vmzone.demo.dto.AddProductDTO;
 import com.vmzone.demo.dto.AddProductInSaleDTO;
 import com.vmzone.demo.dto.EditProductDTO;
@@ -21,6 +22,7 @@ import com.vmzone.demo.dto.ListProductBasicInfo;
 import com.vmzone.demo.dto.ListProductsInSale;
 import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.exceptions.VMZoneException;
 import com.vmzone.demo.models.User;
@@ -46,6 +48,28 @@ public class ProductController {
 		}
 		
 		this.productService.addProduct(product);
+	}
+	@PostMapping("/product/characteristic/{id}")
+	public void addCharacteristicToProduct(@PathVariable("id") Long productId, @RequestBody AddCharacteristicDTO characteristic, HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+		
+		this.productService.addCharacteristicForProduct(productId, characteristic);
+	}
+	@PostMapping("/product/remove/characteristic/{prodId}/{charId}")
+	public void removeCharacteristicForProduct(@PathVariable("prodId") Long prodId, @PathVariable("charId") Long charId , HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
+		if (session.getAttribute("user") == null) {
+			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+		}
+		if(!((User) session.getAttribute("user")).isAdmin()) {
+			throw new BadCredentialsException("You do not have access to this feature!");
+		}
+		
+		this.productService.removeCharacteristicForProduct(prodId, charId);
 	}
 	
 	// http://localhost:8080/product/?categoryId=1 Така се тества!
