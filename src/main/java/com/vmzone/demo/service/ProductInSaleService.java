@@ -28,23 +28,16 @@ public class ProductInSaleService {
 	@Autowired
 	public ProductRepository productRepository;
 	
-	@Autowired
-	private ProductService productService;
 	
 	public void addProductInSale(AddProductInSaleDTO sale) throws VMZoneException {
-		Product p = this.productService.productRepository.findById(sale.getProductId()).get();
-		if(p == null) {
-			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
+		ProductInSale p = this.productInSaleRepository.getProduct(sale.getProductId(), sale.getStartDate(), sale.getEndDate(), sale.getDiscountPercentage());
+		if(p != null) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist or already is in sale");
 		}
-		
-		if(this.productInSaleRepository.findFirstByStartDate(sale.getStartDate()) != null 
-				&& this.productInSaleRepository.findFirstByEndDate(sale.getEndDate()) != null
-				&& this.productInSaleRepository.findFirstByProducts(this.productService.productRepository.findById(sale.getProductId()).get()) != null) {
-			throw new InvalidDataGivenException(HttpStatus.BAD_REQUEST, "Product in sale already exist");
-		}
-		p.setInSale(1);
+		Product prod = this.productRepository.findById(sale.getProductId()).get();
+		prod.setInSale(1);
 		ProductInSale newProductInSale = new ProductInSale(
-				this.productService.productRepository.findById(sale.getProductId()).get(),
+				this.productRepository.findById(sale.getProductId()).get(),
 				sale.getStartDate(),
 				sale.getEndDate(),
 				sale.getDiscountPercentage()
