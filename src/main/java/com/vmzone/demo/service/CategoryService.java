@@ -18,7 +18,8 @@ import com.vmzone.demo.repository.CategoryRepository;
 @Service
 public class CategoryService {
 	
-	@Autowired CategoryRepository categoryRepository;
+	@Autowired
+	public CategoryRepository categoryRepository;
 
 	public List<ListCategory> getAllMainCategories() {
 
