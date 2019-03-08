@@ -2,7 +2,7 @@ package com.vmzone.demo.utils;
 
 public class EmailConstantsHelper {
 	
-	private static final int LENGTH_FOR_FORGOTTEN_PASSWORD = 8;
+	
 	final static String SUBJECT_FORGOTTEN_PASSWORD = "Vmzona - Забравена парола";
 	final static String SUBJECT_PROMOTIONS = "Vmzona - Промоция на седмицата!";
 	final static String SUBJECT_CONTACT_US = "Запитване от потребител";
@@ -11,14 +11,15 @@ public class EmailConstantsHelper {
 	final static String PRODUCT_URL = "http://localhost:8080/sales";
 	
 
-	public static String forgottenPassword(){
+	public static String forgottenPassword(String newPass){
+		
 		StringBuffer message = new StringBuffer();
 		message.append("Здравейте,");
 		message.append(System.lineSeparator());
 		message.append("по Ваше искане Ви изпращаме нова парола, която да замести старата Ви за сайта на Vmzona.");
 		message.append(System.lineSeparator());
 		message.append("Новата Ви парола е: ");
-		message.append(PasswordGenerator.makePassword(LENGTH_FOR_FORGOTTEN_PASSWORD));
+		message.append(newPass);
 		message.append(System.lineSeparator());
 		message.append("Препоръваме Ви да я смените след като успешно влезете в профила си!");
 		message.append(System.lineSeparator());

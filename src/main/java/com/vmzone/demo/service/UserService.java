@@ -31,10 +31,12 @@ import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.UserRepository;
 import com.vmzone.demo.utils.EmailSender;
+import com.vmzone.demo.utils.PasswordGenerator;
 import com.vmzone.demo.utils.RegexValidator;
 
 @Service
 public class UserService {
+	private static final int LENGTH_FOR_FORGOTTEN_PASSWORD = 8;
 	@Autowired
 	private UserRepository userRepository;
 
@@ -119,7 +121,9 @@ public class UserService {
 		if (u == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
-		String hashedPassword = bCryptPasswordEncoder.encode(EmailSender.forgottenPassword(u.getEmail()));
+		String newPass = PasswordGenerator.makePassword(LENGTH_FOR_FORGOTTEN_PASSWORD);
+		String hashedPassword = bCryptPasswordEncoder.encode(newPass);
+		EmailSender.forgottenPassword(u.getEmail(), newPass);
 		u.setPassword(hashedPassword);
 		this.userRepository.save(u);
 	}

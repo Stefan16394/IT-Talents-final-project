@@ -1,6 +1,7 @@
 package com.vmzone.demo.service;
 
 import org.springframework.stereotype.Service;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -20,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Service
 public class FileStorageService {
@@ -45,9 +47,16 @@ public class FileStorageService {
     }
 
     public String storeFile(MultipartFile file, Long id) {
+    	UUID uuid = UUID.randomUUID();
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        String path = file.getOriginalFilename();
+        System.out.println("filename: " + fileName);
+        String fileNameWithoutExtension = FilenameUtils.getBaseName(fileName);
+        String fileExtension = FilenameUtils.getExtension(fileName);
+        String path = fileNameWithoutExtension + uuid.toString() + "." +fileExtension;
+        
+        
+        System.out.println("path" + path);
         
 
         try {
@@ -57,13 +66,13 @@ public class FileStorageService {
             }
 
             // Copy file to the target location (Replacing existing file with the same name)
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
+            Path targetLocation = this.fileStorageLocation.resolve(path);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             Photo photo = new Photo(this.productRepository.findById(id).get(), path);
             
             this.photoRepository.save(photo);
 
-            return fileName;
+            return path;
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }

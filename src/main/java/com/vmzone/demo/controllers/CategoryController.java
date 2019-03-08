@@ -15,6 +15,7 @@ import com.vmzone.demo.dto.AddCategoryDTO;
 import com.vmzone.demo.dto.ListCategory;
 import com.vmzone.demo.dto.ListFinalSubCategories;
 import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.CategoryService;
@@ -30,7 +31,7 @@ public class CategoryController {
 	}
 
 	@PostMapping("/category")
-	public void createCategory(@RequestBody AddCategoryDTO category, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+	public void createCategory(@RequestBody AddCategoryDTO category, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
 		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
