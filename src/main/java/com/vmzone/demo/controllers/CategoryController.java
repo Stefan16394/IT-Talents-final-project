@@ -41,12 +41,6 @@ public class CategoryController {
 		this.categoryService.createCategory(category);
 	}
 	
-	// just for testing, it isnt used anywhere
-	@GetMapping("/category/{id}")
-	public ListCategory getCategoryById(@PathVariable("id") long id) {
-		ListCategory category = this.categoryService.getCategoryById(id);
-		return category;
-	}
 	
 	@GetMapping("/category/subcats/{id}")
 	public List<ListFinalSubCategories> getLeafCategories(@PathVariable("id") long id){

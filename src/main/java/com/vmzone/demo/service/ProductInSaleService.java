@@ -3,6 +3,7 @@ package com.vmzone.demo.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddProductInSaleDTO;
 import com.vmzone.demo.dto.ListProductsInSale;
-import com.vmzone.demo.exceptions.InvalidDataGivenException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.exceptions.VMZoneException;
 import com.vmzone.demo.models.Product;
@@ -32,12 +32,18 @@ public class ProductInSaleService {
 	public void addProductInSale(AddProductInSaleDTO sale) throws VMZoneException {
 		ProductInSale p = this.productInSaleRepository.getProduct(sale.getProductId(), sale.getStartDate(), sale.getEndDate(), sale.getDiscountPercentage());
 		if(p != null) {
-			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist or already is in sale");
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product is already in sale for this dates");
 		}
-		Product prod = this.productRepository.findById(sale.getProductId()).get();
+		Product prod = null;
+		try {
+			prod = this.productRepository.findById(sale.getProductId()).get();	
+		}catch(NoSuchElementException e) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist.");
+		}
+		
 		prod.setInSale(1);
 		ProductInSale newProductInSale = new ProductInSale(
-				this.productRepository.findById(sale.getProductId()).get(),
+				prod,
 				sale.getStartDate(),
 				sale.getEndDate(),
 				sale.getDiscountPercentage()

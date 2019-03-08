@@ -18,8 +18,7 @@ import com.vmzone.demo.repository.CategoryRepository;
 @Service
 public class CategoryService {
 	
-	@Autowired
-	public CategoryRepository categoryRepository;
+	@Autowired CategoryRepository categoryRepository;
 
 	public List<ListCategory> getAllMainCategories() {
 
@@ -31,12 +30,6 @@ public class CategoryService {
 		return mainCategories;
 	}
 
-	public ListCategory getCategoryById(long id) {
-
-		ListCategory categ = this.categoryRepository.findById(id).map(c -> new ListCategory(c.getCategoryId(),
-				c.getName(), c.getParent(), this.getSubcategoriesForCategory(c.getCategoryId()))).get();
-		return categ;
-	}
 
 	public void createCategory(AddCategoryDTO category) throws ResourceAlreadyExistsException {
 		Category checkExists = this.categoryRepository.findByName(category.getName());

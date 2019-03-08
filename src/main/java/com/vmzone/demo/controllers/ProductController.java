@@ -95,7 +95,7 @@ public class ProductController {
 	}
 	
 	@PutMapping("/product/edit/{id}")
-	public void editProduct(@PathVariable long id,@RequestBody EditProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+	public void editProduct(@PathVariable long id, @RequestBody EditProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (session.getAttribute("user") == null) {
 			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
 		}
