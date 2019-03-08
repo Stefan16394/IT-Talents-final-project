@@ -218,6 +218,20 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 	
+	public List<ListProductBasicInfo> sortCharacteristicsByColour(String sortBy, Long categoryId){
+		return this.characteristicRepository.findCharacteristicWithColourAndValue(sortBy).stream()
+				.filter(charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
+				.map(charact -> new ListProductBasicInfo(charact.getProduct().getProductId(), charact.getProduct().getTitle(), charact.getProduct().getPrice(), charact.getProduct().getDate()))
+				.collect(Collectors.toList());
+	}
+	
+	public List<ListProductBasicInfo> sortCharacteristicsBySize(String sortBy, Long categoryId){
+		return this.characteristicRepository.findCharacteristicWithSizeAndValue(sortBy).stream()
+				.filter(charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
+				.map(charact -> new ListProductBasicInfo(charact.getProduct().getProductId(), charact.getProduct().getTitle(), charact.getProduct().getPrice(), charact.getProduct().getDate()))
+				.collect(Collectors.toList());
+	}
+	
 	
 	//TODO possibly a thread
 	public void calculateRating() throws ResourceDoesntExistException {
