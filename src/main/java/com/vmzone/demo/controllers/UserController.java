@@ -161,9 +161,5 @@ public class UserController {
 		}
 		
 		session.invalidate();
-	}
-	
-	
-	
-	
+	}	
 }
