@@ -47,7 +47,7 @@ public class ProductService {
 	private CharacteristicsRepository characteristicRepository;
 
 
-	public long addProduct(AddProductDTO product) throws ResourceDoesntExistException {
+	public Product addProduct(AddProductDTO product) throws ResourceDoesntExistException {
 		Category category = null;
 		try {
 			category = this.categoryRepository.findById(product.getCategoryId()).get();
@@ -57,8 +57,7 @@ public class ProductService {
 		Product newProduct = new Product(category, product.getTitle(), product.getInformation(), product.getInStock(),
 				product.getDelivery(), product.getQuantity(), product.getInSale(), product.getDetailedInformation());
 		
-		this.productRepository.save(newProduct);
-		return newProduct.getProductId();
+		return this.productRepository.save(newProduct);
 	}
 
 	
@@ -162,7 +161,7 @@ public class ProductService {
 	}
 
 
-	public long editProduct( long id ,EditProductDTO editedProduct) throws ResourceDoesntExistException {
+	public Product editProduct( long id ,EditProductDTO editedProduct) throws ResourceDoesntExistException {
 		Product product = null;
 		try {
 			product = this.productRepository.findById(id).get();
@@ -186,8 +185,7 @@ public class ProductService {
 		product.setQuantity(editedProduct.getQuantity());
 		product.setTitle(editedProduct.getTitle());
 
-		this.productRepository.save(product);
-		return product.getProductId();
+		return this.productRepository.save(product);
 	}
 
 	public List<ListProduct> getAllproducts() {

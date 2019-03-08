@@ -14,6 +14,7 @@ import com.vmzone.demo.dto.AddReviewDTO;
 import com.vmzone.demo.dto.EditReviewDTO;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.Review;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.ReviewService;
 import com.vmzone.demo.utils.SessionManager;
@@ -24,7 +25,7 @@ public class ReviewController {
 	private ReviewService reviewService;
 	
 	@PostMapping("/review")
-	public long addReview(@RequestBody AddReviewDTO review, HttpSession session) throws ResourceDoesntExistException {
+	public Review addReview(@RequestBody AddReviewDTO review, HttpSession session) throws ResourceDoesntExistException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}

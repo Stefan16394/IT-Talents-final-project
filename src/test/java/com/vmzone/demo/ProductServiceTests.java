@@ -129,5 +129,4 @@ public class ProductServiceTests {
 	static class Config {
 
 	}
-
 }

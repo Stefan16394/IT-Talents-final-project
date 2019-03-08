@@ -27,12 +27,11 @@ public class ReviewService {
 	@Autowired
 	private ProductRepository productRepository;
 
-	public long addReview(AddReviewDTO review, long id) throws ResourceDoesntExistException {
+	public Review addReview(AddReviewDTO review, long id) throws ResourceDoesntExistException {
 		try {
 			Review newReview = new Review(this.productRepository.findById(review.getProductId()).get(),
 					this.userRepository.findById(id).get(), review.getReview(), review.getRating());
-			this.reviewRepository.save(newReview);
-			return newReview.getReviewId();
+			return this.reviewRepository.save(newReview);
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Invalid product or user");
 		}
@@ -47,7 +46,7 @@ public class ReviewService {
 		this.reviewRepository.save(review);
 	}
 
-	public long editReview(long id, EditReviewDTO editedReview, long userId) throws ResourceDoesntExistException {
+	public Review editReview(long id, EditReviewDTO editedReview, long userId) throws ResourceDoesntExistException {
 		Review review = this.reviewRepository.findReviewForUser(userId, id);
 		if (review == null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist or it is not your review");
@@ -57,8 +56,7 @@ public class ReviewService {
 		review.setRating(editedReview.getRating());
 		review.setIsDeleted(editedReview.getIsDeleted());
 
-		this.reviewRepository.save(review);
-		return review.getReviewId();
+		return this.reviewRepository.save(review);
 	}
 
 }

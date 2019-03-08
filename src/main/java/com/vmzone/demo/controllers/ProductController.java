@@ -26,6 +26,8 @@ import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.exceptions.VMZoneException;
+import com.vmzone.demo.models.Product;
+import com.vmzone.demo.models.ProductInSale;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.ProductInSaleService;
 import com.vmzone.demo.service.ProductService;
@@ -41,7 +43,7 @@ public class ProductController {
 	private ProductInSaleService productInSaleService;
 	
 	@PostMapping("/product")
-	public long addProduct(@RequestBody AddProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+	public Product addProduct(@RequestBody AddProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
@@ -97,7 +99,7 @@ public class ProductController {
 	}
 	
 	@PutMapping("/product/edit/{id}")
-	public long editProduct(@PathVariable long id, @RequestBody EditProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+	public Product editProduct(@PathVariable long id, @RequestBody EditProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
@@ -143,7 +145,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("/sale")
-	public long addProductInSale(@RequestBody AddProductInSaleDTO product, HttpSession session) throws VMZoneException {
+	public ProductInSale addProductInSale(@RequestBody AddProductInSaleDTO product, HttpSession session) throws VMZoneException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}

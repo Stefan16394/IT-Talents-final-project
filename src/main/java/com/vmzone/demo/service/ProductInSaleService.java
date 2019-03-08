@@ -29,7 +29,7 @@ public class ProductInSaleService {
 	public ProductRepository productRepository;
 	
 	
-	public long addProductInSale(AddProductInSaleDTO sale) throws VMZoneException {
+	public ProductInSale addProductInSale(AddProductInSaleDTO sale) throws VMZoneException {
 		ProductInSale p = this.productInSaleRepository.getProduct(sale.getProductId(), sale.getStartDate(), sale.getEndDate(), sale.getDiscountPercentage());
 		if(p != null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product is already in sale for this dates");
@@ -49,8 +49,7 @@ public class ProductInSaleService {
 				sale.getDiscountPercentage()
 				);
 		
-		this.productInSaleRepository.save(newProductInSale);
-		return newProductInSale.getSaleId();
+		return this.productInSaleRepository.save(newProductInSale);
 	}
 	
 	public List<ListProductsInSale> showProductsInSale() {

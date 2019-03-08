@@ -16,6 +16,7 @@ import com.vmzone.demo.dto.OrderBasicInfo;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.BadRequestException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.Order;
 import com.vmzone.demo.models.OrderDetails;
 import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.OrderService;
@@ -27,7 +28,7 @@ public class OrderController {
 	private OrderService orderService;
 
 	@PostMapping("/order")
-	public long createNewOrder(HttpSession session) throws ResourceDoesntExistException, BadRequestException {
+	public Order createNewOrder(HttpSession session) throws ResourceDoesntExistException, BadRequestException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}

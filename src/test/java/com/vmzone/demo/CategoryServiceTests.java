@@ -1,5 +1,6 @@
 package com.vmzone.demo;
 
+import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +56,11 @@ public class CategoryServiceTests {
 	
 	@Test
 	public void testCreateCategoryWhenCategoryDoesntExist() throws ResourceAlreadyExistsException {
+		Category category = new Category(1L, ADD_CATEGORY_DTO.getName(), null);
 		when(categoryRepository.findByName(ADD_CATEGORY_DTO.getName())).thenReturn(null);
+
+		when(categoryRepository.save(category)).thenReturn(category);
+
 		categoryService.createCategory(ADD_CATEGORY_DTO);
 	}
 	
