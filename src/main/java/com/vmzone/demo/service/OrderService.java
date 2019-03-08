@@ -1,15 +1,17 @@
 package com.vmzone.demo.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.vmzone.demo.dto.OrderBasicInfo;
 import com.vmzone.demo.dto.ShoppingCartItem;
 import com.vmzone.demo.exceptions.BadRequestException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
@@ -48,11 +50,24 @@ public class OrderService {
 				Product p = productRepository.findById(item.getProduct_id()).get();
 				OrderDetails orderDetail = new OrderDetails(item.getQuantity(), order.getOrderId(), p);
 				this.orderDetailsRepository.save(orderDetail);
-				
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Transaction failed.");
 		}
+	}
+
+	public List<OrderBasicInfo> getAllOrdersForUser(long id) {
+		List<OrderBasicInfo> orders = this.orderRepository.findOrdersByUserId(id).stream()
+				.map(o -> new OrderBasicInfo(o.getOrderId(), o.getDateOfOrder())).collect(Collectors.toList());
+
+		return orders;
+	}
+
+	public List<OrderDetails> getOrderDetailsById(long id, Long userId) throws ResourceDoesntExistException {
+		Order order = this.orderRepository.findOrderByUserId(id, userId);
+		if(order == null) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist or it is not your review");
+		}
+		return this.orderDetailsRepository.getOrderDetailsForOrder(order.getOrderId());
 	}
 }
