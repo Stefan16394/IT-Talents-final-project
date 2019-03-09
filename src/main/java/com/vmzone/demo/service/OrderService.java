@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.vmzone.demo.dto.OrderBasicInfo;
 import com.vmzone.demo.dto.ShoppingCartItem;
 import com.vmzone.demo.exceptions.BadRequestException;
+import com.vmzone.demo.exceptions.NotEnoughQuantityException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Order;
 import com.vmzone.demo.models.OrderDetails;
@@ -38,7 +39,7 @@ public class OrderService {
 	private UserService userService;
 
 	@Transactional(rollbackOn = Exception.class)
-	public Order createNewOrder(User user) throws ResourceDoesntExistException, BadRequestException {
+	public Order createNewOrder(User user) throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException {
 		List<ShoppingCartItem> items = this.userService.getShoppingCart(user.getUserId());
 		if (items.isEmpty()) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "You shopping cart is empty.");
@@ -48,11 +49,20 @@ public class OrderService {
 			this.orderRepository.save(order);
 			for (ShoppingCartItem item : items) {
 				Product p = productRepository.findById(item.getProduct_id()).get();
+				if(p.getQuantity()<item.getQuantity()) {
+					throw new NotEnoughQuantityException(HttpStatus.BAD_REQUEST,"There is not enough quantity of product with id "+p.getProductId());
+				}
+				p.setQuantity(p.getQuantity()-item.getQuantity());
+				this.productRepository.save(p);
 				OrderDetails orderDetail = new OrderDetails(item.getQuantity(), order.getOrderId(), p);
 				this.orderDetailsRepository.save(orderDetail);
 			}
+			this.orderRepository.clearShoppingCart(user.getUserId());
 			return order;
-		} catch (Exception e) {
+		}catch(NotEnoughQuantityException e) { 
+			throw e;
+		}
+		catch (Exception e) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Transaction failed.");
 		}
 	}

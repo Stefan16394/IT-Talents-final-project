@@ -25,6 +25,7 @@ import com.vmzone.demo.utils.SessionManager;
 
 @RestController
 public class CategoryController {
+
 	@Autowired
 	private CategoryService categoryService;
 
@@ -43,7 +44,6 @@ public class CategoryController {
 		}
 		return this.categoryService.createCategory(category);
 	}
-	
 	
 	@GetMapping("/category/subcats/{id}")
 	public List<ListFinalSubCategories> getLeafCategories(@PathVariable("id") long id){

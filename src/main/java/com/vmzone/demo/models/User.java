@@ -54,7 +54,7 @@ public class User {
     private String adress;
     private int age;
     private int isDeleted;
-	public User(Long userId, String name, String surname, String email, String password, String gender, int isAdmin,
+	public User(Long userId, String name, String surname, String email, String password, String gender,
 			int isSubscribed, String phone, String city, String postCode, String adress, int age, int isDeleted) {
 		super();
 		this.userId = userId;
@@ -63,7 +63,6 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.gender = gender;
-		this.isAdmin = isAdmin;
 		this.isSubscribed = isSubscribed;
 		this.phone = phone;
 		this.city = city;
