@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddCharacteristicDTO;
@@ -103,10 +104,13 @@ public class ProductService {
 	}
 
 	public ListProduct getAllInfoForProduct(long id) throws BadCredentialsException {
-		Product p = this.productRepository.findById(id).get();
-		if (p == null) {
-			throw new BadCredentialsException();
+		Product p = null;
+		try {
+			this.productRepository.findById(id).get();
+		}catch (NoSuchElementException e) {
+			throw new BadCredentialsException("There is no such product");
 		}
+
 		List<ListReview> reviews = getReviewsForProduct(id);
 		List<AddCharacteristicDTO> characteristics = getCharacteristicsForProduct(id);
 
@@ -250,7 +254,8 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 
-	// TODO possibly a thread
+	// TODO should we leave it
+	@Scheduled(fixedRate = 30*24*60*60000)
 	public void calculateRating() throws ResourceDoesntExistException {
 		List<ListProduct> products = getAllproducts();
 
