@@ -159,6 +159,17 @@ public class ProductController {
 		return this.productInSaleService.showProductsInSale();
 	}
 	
+	@PostMapping("/deleteSale/{id}")
+	public void deleteProductInSale(@PathVariable("id") long id, HttpSession session) throws VMZoneException {
+		if (!SessionManager.isUserLoggedIn(session)) {
+			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+		}
+		if(!SessionManager.isAdmin(session)) {
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
+		}
+		this.productInSaleService.deletePromotion(id);
+	}
+	
 	@GetMapping("/searchPrice")
 	public List<ListProductBasicInfo> searchPrice(@RequestParam("min") double min , @RequestParam("max") double max){
 		return this.productService.searchPrice(min, max);

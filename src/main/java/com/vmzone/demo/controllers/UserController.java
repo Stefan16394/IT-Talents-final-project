@@ -28,6 +28,7 @@ import com.vmzone.demo.dto.CartProductDTO;
 import com.vmzone.demo.dto.ChangePasswordDTO;
 import com.vmzone.demo.dto.ContactUsDTO;
 import com.vmzone.demo.dto.EditProfileDTO;
+import com.vmzone.demo.dto.ForgottenPasswordDTO;
 import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
 import com.vmzone.demo.dto.ShoppingCartItem;
@@ -118,8 +119,8 @@ public class UserController {
 	}
 	
 	@PostMapping("/forgottenPassword")
-	public void forgottenPassword(@RequestParam("email") String email) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
-		this.userService.forgottenPassword(email);
+	public void forgottenPassword(@RequestBody ForgottenPasswordDTO pass) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
+		this.userService.forgottenPassword(pass.getEmail());
 	}
 	
 	//TODO threads

@@ -59,7 +59,9 @@ public class OrderService {
 
 	public List<OrderBasicInfo> getAllOrdersForUser(long id) {
 		List<OrderBasicInfo> orders = this.orderRepository.findOrdersByUserId(id).stream()
-				.map(o -> new OrderBasicInfo(o.getOrderId(), o.getDateOfOrder())).collect(Collectors.toList());
+				.filter(order -> order.getIsDeleted() == 0)
+				.map(o -> new OrderBasicInfo(o.getOrderId(), o.getDateOfOrder()))
+				.collect(Collectors.toList());
 
 		return orders;
 	}

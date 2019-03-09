@@ -29,6 +29,7 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long orderId;
 	private LocalDateTime dateOfOrder;
+	private int isDeleted;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")

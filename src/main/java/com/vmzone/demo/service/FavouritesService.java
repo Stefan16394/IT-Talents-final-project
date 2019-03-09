@@ -54,6 +54,7 @@ public class FavouritesService {
 	
 	public List<ListFavouriteProductDTO> getFavouritesForUser(long id) {
 		return this.favouritesRepository.findFavouritesForUser(id).stream()
+				.filter(fav -> fav.getIsDeleted() == 0)
 				.map(fav -> new ListFavouriteProductDTO(fav.getProduct().getTitle(), fav.getProduct().getInformation(), fav.getProduct().getRating()))
 				.collect(Collectors.toList());
 	}

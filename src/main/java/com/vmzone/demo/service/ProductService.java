@@ -93,6 +93,7 @@ public class ProductService {
 
 	public List<ListReview> getReviewsForProduct(long id) {
 		return this.reviewRepository.findReviewsForProduct(id).stream()
+				.filter(rev -> rev.getIsDeleted() == 0)
 				.map(review -> new ListReview(review.getReviewId(), review.getReview(), review.getRating()))
 				.collect(Collectors.toList());
 	}
@@ -110,6 +111,9 @@ public class ProductService {
 			this.productRepository.findById(id).get();
 		}catch (NoSuchElementException e) {
 			throw new BadCredentialsException("There is no such product");
+		}
+		if(p.getIsDeleted() == 1) {
+			throw new BadCredentialsException("There product has been deleted!");
 		}
 
 		List<ListReview> reviews = getReviewsForProduct(id);
@@ -148,6 +152,7 @@ public class ProductService {
 
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
 		return this.productRepository.getAllProductsWithSmallQuantity(SMALL_QUANTITY_INDICATOR).stream()
+				.filter(prod -> prod.getIsDeleted() == 1)
 				.map(product -> new ListProductBasicInfo(product.getTitle(), product.getPrice()))
 				.collect(Collectors.toList());
 	}
@@ -193,7 +198,8 @@ public class ProductService {
 	}
 
 	public List<ListProduct> getAllproducts() {
-		return this.productRepository.findAll().stream().filter(product -> product.getProductId() != null)
+		return this.productRepository.findAll().stream()
+				.filter(product -> product.getProductId() != null && product.getIsDeleted() == 0)
 				.map(product -> {
 					try {
 						return getAllInfoForProduct(product.getProductId());
@@ -208,7 +214,7 @@ public class ProductService {
 
 	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId) {
 		return this.productRepository.findAll().stream()
-				.filter(product -> categoryId == null || product.getCategory().getCategoryId().equals(categoryId))
+				.filter(product -> (categoryId == null || product.getCategory().getCategoryId().equals(categoryId)) && product.getIsDeleted() == 0)
 				.sorted((p1, p2) -> {
 					switch (sortBy) {
 					case "newest":
@@ -238,8 +244,8 @@ public class ProductService {
 	}
 
 	public List<ListProductBasicInfo> sortCharacteristicsByColour(String sortBy, Long categoryId) {
-		return this.characteristicRepository.findCharacteristicWithColourAndValue(sortBy).stream().filter(
-				charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
+		return this.characteristicRepository.findCharacteristicWithColourAndValue(sortBy).stream()
+				.filter(charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
 				.map(charact -> new ListProductBasicInfo(charact.getProduct().getProductId(),
 						charact.getProduct().getTitle(), charact.getProduct().getPrice(),
 						charact.getProduct().getDate()))
@@ -255,8 +261,7 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 
-	// TODO should we leave it
-	@Scheduled(fixedRate = 30*24*60*60000)
+	
 	public void calculateRating() throws ResourceDoesntExistException {
 		List<ListProduct> products = getAllproducts();
 

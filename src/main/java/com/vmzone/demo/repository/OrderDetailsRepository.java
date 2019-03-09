@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import com.vmzone.demo.models.OrderDetails;
 
 public interface OrderDetailsRepository  extends JpaRepository<OrderDetails, Long>{
-	@Query(value = "SELECT * FROM order_details WHERE order_id = :id",nativeQuery = true)
+	@Query(value = "SELECT * FROM order_details WHERE order_id = :id and is_deleted = 0",nativeQuery = true)
 	List<OrderDetails> getOrderDetailsForOrder(@Param("id") long id);
 }

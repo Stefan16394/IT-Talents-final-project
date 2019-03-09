@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddProductInSaleDTO;
@@ -61,6 +62,16 @@ public class ProductInSaleService {
 				&& product.getEndDate().isAfter(dateNow))
 				.map(p -> new ListProductsInSale(p.getProducts().getTitle(), p.getProducts().getInformation(), p.getStartDate(), p.getEndDate(), p.getDiscountPercentage()))
 				.collect(Collectors.toList());
+	}
+	
+	@Scheduled(fixedRate = 7*24*60*60000)
+	public void deleteExpiredPromotions() {
+		LocalDateTime dateNow = LocalDateTime.now();
+		this.productInSaleRepository.deleteExpired(dateNow);
+	}
+	
+	public void deletePromotion(long id) {
+		this.productInSaleRepository.deletePromotion(id);
 	}
 
 }

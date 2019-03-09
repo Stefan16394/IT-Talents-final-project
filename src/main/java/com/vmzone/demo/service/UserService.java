@@ -86,7 +86,9 @@ public class UserService {
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
-		
+		if(u.getIsDeleted() == 1) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User has been deleted");
+		}
 		User check = this.userRepository.findByEmail(user.getEmail());
 		
 		if(check != null && !u.equals(check)) {
@@ -116,6 +118,9 @@ public class UserService {
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
+		if(u.getIsDeleted() == 1) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User has been deleted");
+		}
 
 		String hashedPassword = bCryptPasswordEncoder.encode(pass.getPassword());
 		u.setPassword(hashedPassword);
@@ -126,9 +131,10 @@ public class UserService {
 			InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(email);
 
-		if (u == null) {
+		if (u == null || u.getIsDeleted() == 1) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
+		
 		String newPass = PasswordGenerator.makePassword(LENGTH_FOR_FORGOTTEN_PASSWORD);
 		String hashedPassword = bCryptPasswordEncoder.encode(newPass);
 		EmailSender.forgottenPassword(u.getEmail(), newPass);
@@ -151,6 +157,9 @@ public class UserService {
 			u = this.userRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
+		}
+		if(u.getIsDeleted() == 1) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User has been deleted");
 		}
 		u.setIsDeleted(1);
 		this.userRepository.save(u);
@@ -177,19 +186,25 @@ public class UserService {
 		return items;
 	}
 	
-	public long addProductToCart(CartProductDTO addProduct, long id) throws NotEnoughQuantityException {
+	public long addProductToCart(CartProductDTO addProduct, long id) throws NotEnoughQuantityException, ResourceDoesntExistException {
 		Product p = this.productRepository.findById(addProduct.getProductId()).get();
 		if(p.getQuantity() < addProduct.getQuantity()) {
 			throw new NotEnoughQuantityException("There is not enough quantity of this product! Try with less or add it to you cart later.");
+		}
+		if(p.getIsDeleted() == 1) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product has been deleted");
 		}
 		this.userRepository.addProductToCart(addProduct.getProductId(), addProduct.getQuantity(), id);
 		return addProduct.getProductId();
 	}
 	
-	public long updateProductInCart(CartProductDTO editProduct, long id) throws NotEnoughQuantityException {
+	public long updateProductInCart(CartProductDTO editProduct, long id) throws NotEnoughQuantityException, ResourceDoesntExistException {
 		Product p = this.productRepository.findById(editProduct.getProductId()).get();
 		if(p.getQuantity() < editProduct.getQuantity()) {
 			throw new NotEnoughQuantityException("There is not enough quantity of this product! Try with less or add it to you cart later.");
+		}
+		if(p.getIsDeleted() == 1) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product has been deleted");
 		}
 		this.userRepository.updateProductInCart(editProduct.getProductId(), editProduct.getQuantity(), id);
 		return editProduct.getProductId();
