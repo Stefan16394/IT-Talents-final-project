@@ -40,7 +40,6 @@ public class CategoryService {
 		Category newCategory = new Category(category.getName(), category.getParent_id() == null ? null
 				: this.categoryRepository.findById(category.getParent_id()).get());
 		return this.categoryRepository.save(newCategory);
-//		return newCategory.getCategoryId();
 	}
 
 	public List<ListSubCategory> getSubcategoriesForCategory(long id) {

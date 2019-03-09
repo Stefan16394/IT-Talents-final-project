@@ -18,6 +18,8 @@ import com.vmzone.demo.dto.AddCharacteristicDTO;
 import com.vmzone.demo.dto.AddProductDTO;
 import com.vmzone.demo.dto.AddProductInSaleDTO;
 import com.vmzone.demo.dto.EditProductDTO;
+import com.vmzone.demo.dto.HomePageDTO;
+import com.vmzone.demo.dto.ListCategory;
 import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListProductBasicInfo;
 import com.vmzone.demo.dto.ListProductsInSale;
@@ -28,7 +30,7 @@ import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.exceptions.VMZoneException;
 import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.ProductInSale;
-import com.vmzone.demo.models.User;
+import com.vmzone.demo.service.CategoryService;
 import com.vmzone.demo.service.ProductInSaleService;
 import com.vmzone.demo.service.ProductService;
 import com.vmzone.demo.utils.SessionManager;
@@ -40,7 +42,17 @@ public class ProductController {
 	private ProductService productService;
 	
 	@Autowired
+	private CategoryService categoryService;
+	
+	@Autowired
 	private ProductInSaleService productInSaleService;
+	
+	@GetMapping("/home")
+	public HomePageDTO homePage() {
+		List<ListCategory> categories= this.categoryService.getAllMainCategories();
+		List<ListProduct> products = this.getAllproducts();
+		return new HomePageDTO(categories,products);
+	}
 	
 	@PostMapping("/product")
 	public Product addProduct(@RequestBody AddProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {

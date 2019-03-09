@@ -42,14 +42,14 @@ public class UserService {
 	private static final int LENGTH_FOR_FORGOTTEN_PASSWORD = 8;
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private ProductRepository productRepository;
 
 	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
 
-	public long register(RegisterDTO user) throws SQLException, ResourceAlreadyExistsException, AddressException,
+	public User register(RegisterDTO user) throws SQLException, ResourceAlreadyExistsException, AddressException,
 			InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(user.getEmail());
 		if (u != null) {
@@ -59,11 +59,10 @@ public class UserService {
 		String hashedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 
 		User newUser = new User(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(),
-				hashedPassword, user.getGender(), user.getIsAdmin(), user.getIsSubscribed(), null, null, null, null, 0,
-				0);
-		this.userRepository.save(newUser);
+				hashedPassword, user.getGender(), user.getIsSubscribed(), null, null, null, null, 0, 0);
 		EmailSender.registration(user.getEmail());
-		return newUser.getUserId();
+
+		return this.userRepository.save(newUser);
 	}
 
 	public User login(LoginDTO loginDTO) throws ResourceDoesntExistException, BadCredentialsException {
@@ -78,20 +77,21 @@ public class UserService {
 		return user;
 	}
 
-	public User editProfile(long id, EditProfileDTO user) throws ResourceDoesntExistException, ResourceAlreadyExistsException {
+	public User editProfile(long id, EditProfileDTO user)
+			throws ResourceDoesntExistException, ResourceAlreadyExistsException {
 		User u = null;
 		try {
 			u = this.userRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "User doesn't exist");
 		}
-		
+
 		User check = this.userRepository.findByEmail(user.getEmail());
-		
-		if(check != null && !u.equals(check)) {
+
+		if (check != null && !u.equals(check)) {
 			throw new ResourceAlreadyExistsException(HttpStatus.CONFLICT, "There is already a user with this email!");
 		}
-				
+
 		u.setName(user.getName());
 		u.setSurname(user.getSurname());
 		u.setEmail(user.getEmail());
@@ -120,7 +120,8 @@ public class UserService {
 		u.setPassword(hashedPassword);
 		this.userRepository.save(u);
 	}
-	//TODO test it if it works
+
+	// TODO test it if it works
 	public void forgottenPassword(String email) throws ResourceDoesntExistException, AddressException,
 			InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(email);
@@ -163,39 +164,49 @@ public class UserService {
 
 		EmailSender.contactUs(contact.toString());
 	}
-	
+
 	public List<ShoppingCartItem> getShoppingCart(long id) {
-		List<ShoppingCartItem> items= new ArrayList<>();
+		List<ShoppingCartItem> items = new ArrayList<>();
 		List<Object> objects = this.userRepository.getShoppingCart(id);
-		for(Object o :objects) {
+		for (Object o : objects) {
 			Object[] row = (Object[]) o;
-			items.add(new ShoppingCartItem(Long.parseLong(row[0].toString()), row[1].toString(), Double.parseDouble(row[2].toString()),
-					Integer.parseInt(row[3].toString())));
+			items.add(new ShoppingCartItem(Long.parseLong(row[0].toString()), row[1].toString(),
+					Double.parseDouble(row[2].toString()), Integer.parseInt(row[3].toString())));
 		}
 		return items;
 	}
-	
+
 	public long addProductToCart(CartProductDTO addProduct, long id) throws NotEnoughQuantityException {
 		Product p = this.productRepository.findById(addProduct.getProductId()).get();
-		if(p.getQuantity() < addProduct.getQuantity()) {
-			throw new NotEnoughQuantityException("There is not enough quantity of this product! Try with less or add it to you cart later.");
+		if (p.getQuantity() < addProduct.getQuantity()) {
+			throw new NotEnoughQuantityException(HttpStatus.BAD_REQUEST,
+					"There is not enough quantity of this product! Try with less or add it to you cart later.");
 		}
 		this.userRepository.addProductToCart(addProduct.getProductId(), addProduct.getQuantity(), id);
 		return addProduct.getProductId();
 	}
-	
-	public long updateProductInCart(CartProductDTO editProduct, long id) throws NotEnoughQuantityException {
-		Product p = this.productRepository.findById(editProduct.getProductId()).get();
-		if(p.getQuantity() < editProduct.getQuantity()) {
-			throw new NotEnoughQuantityException("There is not enough quantity of this product! Try with less or add it to you cart later.");
+
+	public long updateProductInCart(CartProductDTO editProduct, long id) throws NotEnoughQuantityException, ResourceDoesntExistException {
+		Product p = null;
+		try {
+			p = this.productRepository.findById(editProduct.getProductId()).get();
+		} catch (NoSuchElementException e) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
+		}
+		List<ShoppingCartItem> items = this.getShoppingCart(id);
+		if(!items.contains(p)) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist in your cart.");
+		}
+		if (p.getQuantity() < editProduct.getQuantity()) {
+			throw new NotEnoughQuantityException(HttpStatus.BAD_REQUEST,
+					"There is not enough quantity of this product! Try with less or add it to you cart later.");
 		}
 		this.userRepository.updateProductInCart(editProduct.getProductId(), editProduct.getQuantity(), id);
 		return editProduct.getProductId();
 	}
 
 	public void deleteProductInCart(long productId, long userId) {
-		this.userRepository.deleteProductInCart(productId,userId);
-		
+		this.userRepository.deleteProductInCart(productId, userId);
 	}
-	
+
 }

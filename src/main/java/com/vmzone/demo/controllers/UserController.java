@@ -6,15 +6,17 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +34,7 @@ import com.vmzone.demo.dto.LoginDTO;
 import com.vmzone.demo.dto.RegisterDTO;
 import com.vmzone.demo.dto.ShoppingCartItem;
 import com.vmzone.demo.exceptions.BadCredentialsException;
+import com.vmzone.demo.exceptions.BadRequestException;
 import com.vmzone.demo.exceptions.InvalidEmailException;
 import com.vmzone.demo.exceptions.NotEnoughQuantityException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
@@ -44,18 +47,10 @@ import com.vmzone.demo.utils.SessionManager;
 public class UserController {
 	@Autowired
 	private UserService userService;
-
+	
 	@PostMapping("/user/register")
-	public long registerUser(@RequestBody @Valid  RegisterDTO user, BindingResult result) throws ResourceAlreadyExistsException, SQLException, AddressException, InvalidEmailException, MessagingException, IOException {
-		UserValidator userValidator = new UserValidator();
-		userValidator.validate(user, result);
-
-		if (!result.hasErrors()) {
+	public User registerUser(@RequestBody @Valid  RegisterDTO user) throws ResourceAlreadyExistsException, SQLException, AddressException, InvalidEmailException, MessagingException, IOException {
 			return this.userService.register(user);
-		} else {
-			ObjectError error = result.getAllErrors().stream().findFirst().get();
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, error.getDefaultMessage());
-		}
 	}
 
 	@PostMapping("/user/login")
@@ -76,7 +71,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/product/cart")
-	public long addProductToCart(@RequestBody CartProductDTO addProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException {
+	public long addProductToCart(@RequestBody @Valid CartProductDTO addProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
@@ -84,7 +79,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/product/cart/update")
-	public long updateProductInCart(@RequestBody CartProductDTO editProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException {
+	public long updateProductInCart(@RequestBody @Valid CartProductDTO editProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}

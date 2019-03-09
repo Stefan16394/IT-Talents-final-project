@@ -46,7 +46,6 @@ public class ProductService {
 	@Autowired
 	private CharacteristicsRepository characteristicRepository;
 
-
 	public Product addProduct(AddProductDTO product) throws ResourceDoesntExistException {
 		Category category = null;
 		try {

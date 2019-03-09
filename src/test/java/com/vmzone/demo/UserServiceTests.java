@@ -59,14 +59,14 @@ public class UserServiceTests {
 
 	@Before
 	public void init() {
-		EXPECTED_USER = new User(1L, "Ivan", "Ivanov", EMAIL, PASSWORD, "Male", 0, 0, null, null, null, null, 25, 0);
+		EXPECTED_USER = new User(1L, "Ivan", "Ivanov", EMAIL, PASSWORD, "Male", 0,  null, null, null, null, 25, 0);
 	}
 
 	@Test(expected = ResourceAlreadyExistsException.class)
 	public void testRegisterUserWithAlreadyExistentUser() throws AddressException, ResourceAlreadyExistsException,
 			InvalidEmailException, SQLException, MessagingException, IOException {
 		when(userRepository.findByEmail(EMAIL)).thenReturn(new User());
-		userService.register(new RegisterDTO(1L, "Ivan", "Ivanov", EMAIL, PASSWORD, "Male", 0, 0));
+		userService.register(new RegisterDTO(1L, "Ivan", "Ivanov", EMAIL, PASSWORD, "Male", 0));
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class UserServiceTests {
 			InvalidEmailException, SQLException, MessagingException, IOException {
 		when(userRepository.findByEmail(EMAIL)).thenReturn(null);
 		when(bCryptPasswordEncoder.encode(PASSWORD)).thenReturn(PASSWORD);
-		userService.register(new RegisterDTO(1L, "Ivan", "Ivanov", EMAIL, PASSWORD, "Male", 0, 0));
+		userService.register(new RegisterDTO(1L, "Ivan", "Ivanov", EMAIL, PASSWORD, "Male", 0));
 	}
 
 	@Test(expected = ResourceDoesntExistException.class)

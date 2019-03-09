@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vmzone.demo.dto.OrderBasicInfo;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.BadRequestException;
+import com.vmzone.demo.exceptions.NotEnoughQuantityException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Order;
 import com.vmzone.demo.models.OrderDetails;
@@ -28,7 +29,7 @@ public class OrderController {
 	private OrderService orderService;
 
 	@PostMapping("/order")
-	public Order createNewOrder(HttpSession session) throws ResourceDoesntExistException, BadRequestException {
+	public Order createNewOrder(HttpSession session) throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}

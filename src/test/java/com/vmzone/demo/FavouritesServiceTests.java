@@ -31,7 +31,7 @@ import com.vmzone.demo.service.FavouritesService;
 @SpringBootTest
 public class FavouritesServiceTests {
 
-	private static final User TEST_USER = new User(1L, "User", "User", "user@abv.bg", "1234", "male", 0, 1, null, null, null, null, 25, 0);
+	private static final User TEST_USER = new User(1L, "User", "User", "user@abv.bg", "1234", "male", 0,  null, null, null, null, 25, 0);
 
 	private static final Product TEST_PRODUCT = new Product(new Category("Shoes",null), "Product", "Information", 1, 24, 20, 1, "Details");
 

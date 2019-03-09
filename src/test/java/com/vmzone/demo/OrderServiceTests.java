@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import com.vmzone.demo.dto.OrderBasicInfo;
 import com.vmzone.demo.dto.ShoppingCartItem;
 import com.vmzone.demo.exceptions.BadRequestException;
+import com.vmzone.demo.exceptions.NotEnoughQuantityException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Category;
 import com.vmzone.demo.models.Order;
@@ -35,10 +36,10 @@ import com.vmzone.demo.service.UserService;
 public class OrderServiceTests {
 	private static final long DEFAULT_ID_TO_SEARCH = 1L;
 
-	private static final User TEST_USER = new User(1L, "User", "User", "user@abv.bg", "1234", "male", 0, 1, null, null,
+	private static final User TEST_USER = new User(1L, "User", "User", "user@abv.bg", "1234", "male", 0,  null, null,
 			null, null, 25, 0);
 	
-	private static final Product TEST_PRODUCT = new Product(new Category("Shoes",null), "Product", "Information", 1, 24, 20, 1, "Details");
+	private static final Product TEST_PRODUCT = new Product(new Category("Shoes",null), "Product", "Information", 1, 24, 15, 1, "Details");
 
 
 	@Mock
@@ -91,13 +92,13 @@ public class OrderServiceTests {
 	}
 	
 	@Test(expected = ResourceDoesntExistException.class)
-	public void testCreateNewOrderWhenShoppingCartIsEmpty() throws ResourceDoesntExistException, BadRequestException {
+	public void testCreateNewOrderWhenShoppingCartIsEmpty() throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException {
 		when(userService.getShoppingCart(DEFAULT_ID_TO_SEARCH)).thenReturn(new ArrayList<ShoppingCartItem>());
 		orderService.createNewOrder(TEST_USER);
 	}
 	
 	@Test(expected = BadRequestException.class)
-	public void testCreateNewOrderWhenTransactionFails() throws ResourceDoesntExistException, BadRequestException {
+	public void testCreateNewOrderWhenTransactionFails() throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException {
 		List<ShoppingCartItem> items = new ArrayList<>();
 		items.add(new ShoppingCartItem(DEFAULT_ID_TO_SEARCH, "Product", 10, 15));
 		
@@ -106,9 +107,18 @@ public class OrderServiceTests {
 	}
 	
 	@Test
-	public void testCreateNewOrderWithValidData() throws ResourceDoesntExistException, BadRequestException {
+	public void testCreateNewOrderWithValidData() throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException {
 		List<ShoppingCartItem> items = new ArrayList<>();
 		items.add(new ShoppingCartItem(DEFAULT_ID_TO_SEARCH, "Product", 10, 15));
+		when(productRepository.findById(items.get(0).getProduct_id())).thenReturn(Optional.of(TEST_PRODUCT));
+		when(userService.getShoppingCart(DEFAULT_ID_TO_SEARCH)).thenReturn(items);
+		orderService.createNewOrder(TEST_USER);
+	}
+	
+	@Test(expected = NotEnoughQuantityException.class)
+	public void testCreateNewOrderWhenThereIsNotEnoughQuantityOfProduct() throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException {
+		List<ShoppingCartItem> items = new ArrayList<>();
+		items.add(new ShoppingCartItem(DEFAULT_ID_TO_SEARCH, "Product", 10, 20));
 		when(productRepository.findById(items.get(0).getProduct_id())).thenReturn(Optional.of(TEST_PRODUCT));
 		when(userService.getShoppingCart(DEFAULT_ID_TO_SEARCH)).thenReturn(items);
 		orderService.createNewOrder(TEST_USER);
