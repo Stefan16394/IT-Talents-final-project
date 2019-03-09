@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,8 +77,8 @@ public class ProductController {
 		
 		return this.productService.addCharacteristicForProduct(productId, characteristic);
 	}
-	@PostMapping("/product/remove/characteristic/{prodId}/{charId}")
-	public void removeCharacteristicForProduct(@PathVariable("prodId") Long prodId, @PathVariable("charId") Long charId , HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
+	@PostMapping("/product/remove/characteristic")
+	public void removeCharacteristicForProduct(@RequestParam("productId") Long prodId, @RequestParam("characteristicId") Long charId , HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
@@ -137,24 +138,24 @@ public class ProductController {
 	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
 		return this.productService.getAllInfoForProduct(id);
 	}
-	//TODO needs to be done properly
+
 		@GetMapping("/productsSort")
 		public List<ListProductBasicInfo> getAllproducts(
 				@RequestParam(name="sortBy", required=false) String sortBy,
 				@RequestParam(name="categoryId", required=false) Long categoryId) {
 			return this.productService.getAllproducts(sortBy, categoryId);
 		}
-	//TODO must be a thread
-//	@PostMapping("/calculate")
-//	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
-//		if (!SessionManager.isUserLoggedIn(session)) {
-//			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
-//		}
-//		if(!SessionManager.isAdmin(session)) {
-//			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
-//		}
-//		this.productService.calculateRating();
-//	}
+
+	@PostMapping("/calculate")
+	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+		if (!SessionManager.isUserLoggedIn(session)) {
+			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+		}
+		if(!SessionManager.isAdmin(session)) {
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
+		}
+		this.productService.calculateRating();
+	}
 	
 	@PostMapping("/sale")
 	public ProductInSale addProductInSale(@RequestBody AddProductInSaleDTO product, HttpSession session) throws VMZoneException {
@@ -171,7 +172,7 @@ public class ProductController {
 		return this.productInSaleService.showProductsInSale();
 	}
 	
-	@PostMapping("/deleteSale/{id}")
+	@DeleteMapping("/deleteSale/{id}")
 	public void deleteProductInSale(@PathVariable("id") long id, HttpSession session) throws VMZoneException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");

@@ -107,7 +107,7 @@ public class ProductService {
 	public ListProduct getAllInfoForProduct(long id) throws BadCredentialsException {
 		Product p = null;
 		try {
-			this.productRepository.findById(id).get();
+			p = this.productRepository.findById(id).get();
 		}catch (NoSuchElementException e) {
 			throw new BadCredentialsException("There is no such product");
 		}
@@ -119,7 +119,7 @@ public class ProductService {
 		List<AddCharacteristicDTO> characteristics = getCharacteristicsForProduct(id);
 
 		ListProduct info = new ListProduct(p.getProductId(), p.getTitle(), p.getInformation(), p.getInStock(),
-				p.getDelivery(), p.getDetailedInformation());
+				p.getDelivery(), p.getDetailedInformation(), p.getRating());
 		if (!reviews.isEmpty()) {
 			info.fillReviews(reviews);
 		}
@@ -151,7 +151,7 @@ public class ProductService {
 
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
 		return this.productRepository.getAllProductsWithSmallQuantity(SMALL_QUANTITY_INDICATOR).stream()
-				.filter(prod -> prod.getIsDeleted() == 1)
+				.filter(prod -> prod.getIsDeleted() == 0)
 				.map(product -> new ListProductBasicInfo(product.getTitle(), product.getPrice()))
 				.collect(Collectors.toList());
 	}

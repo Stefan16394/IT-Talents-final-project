@@ -210,10 +210,6 @@ public class UserService {
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
 		}
-		List<ShoppingCartItem> items = this.getShoppingCart(id);
-		if(!items.contains(p)) {
-			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist in your cart.");
-		}
 		if (p.getQuantity() < editProduct.getQuantity()) {
 			throw new NotEnoughQuantityException(HttpStatus.BAD_REQUEST,
 					"There is not enough quantity of this product! Try with less or add it to you cart later.");

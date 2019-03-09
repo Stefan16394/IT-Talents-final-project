@@ -46,7 +46,10 @@ public class FavouritesService {
 		Favourite fav = this.favouritesRepository.findFavouriteFoUser(userId,id);
 		
 		if(fav == null) {
-			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Favourite doesn't exist");
+		}
+		if(fav.getIsDeleted() == 1) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Favourite has already been deleted");
 		}
 		fav.setIsDeleted(1);
 		this.favouritesRepository.save(fav);

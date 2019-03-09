@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vmzone.demo.dto.AddToFavouritesDTO;
@@ -36,8 +37,8 @@ public class FavouriteController {
 		return this.favouritesService.addToFavourites(fav, SessionManager.getLoggedUserId(session));
 	}
 	
-	@PutMapping("/favourites/remove/{id}")
-	public void removeFavourite(@PathVariable long id, HttpSession session) throws BadCredentialsException, ResourceDoesntExistException {
+	@PutMapping("/favourites/remove")
+	public void removeFavourite(@RequestParam("favouriteId") long id, HttpSession session) throws BadCredentialsException, ResourceDoesntExistException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You are not logged in! You should log in first!");
 		}
