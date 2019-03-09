@@ -24,11 +24,15 @@ public class ListProduct {
 	private List<ListReview> reviews = new LinkedList<>();
 	private List<AddCharacteristicDTO> characteristics = new LinkedList<>();
 
-	public ListProduct(Long id, String title, String information, int inStock, int delivery, String detailedInformation) {
+	public ListProduct(Long id, String title, String information, int inStock, int delivery, String detailedInformation, Double rating) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.information = information;
+		this.inStock = inStock;
+		this.delivery = delivery;
+		this.detailedInformation = detailedInformation;
+		this.rating = rating;
 	}
 	
 	public void fillReviews(List<ListReview> reviews) {

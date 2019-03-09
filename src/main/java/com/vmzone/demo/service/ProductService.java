@@ -93,6 +93,7 @@ public class ProductService {
 
 	public List<ListReview> getReviewsForProduct(long id) {
 		return this.reviewRepository.findReviewsForProduct(id).stream()
+				.filter(rev -> rev.getIsDeleted() == 0)
 				.map(review -> new ListReview(review.getReviewId(), review.getReview(), review.getRating()))
 				.collect(Collectors.toList());
 	}
@@ -107,16 +108,19 @@ public class ProductService {
 	public ListProduct getAllInfoForProduct(long id) throws BadCredentialsException {
 		Product p = null;
 		try {
-			this.productRepository.findById(id).get();
-		} catch (NoSuchElementException e) {
+			p = this.productRepository.findById(id).get();
+		}catch (NoSuchElementException e) {
 			throw new BadCredentialsException("There is no such product");
+		}
+		if(p.getIsDeleted() == 1) {
+			throw new BadCredentialsException("There product has been deleted!");
 		}
 
 		List<ListReview> reviews = getReviewsForProduct(id);
 		List<AddCharacteristicDTO> characteristics = getCharacteristicsForProduct(id);
 
 		ListProduct info = new ListProduct(p.getProductId(), p.getTitle(), p.getInformation(), p.getInStock(),
-				p.getDelivery(), p.getDetailedInformation());
+				p.getDelivery(), p.getDetailedInformation(), p.getRating());
 		if (!reviews.isEmpty()) {
 			info.fillReviews(reviews);
 		}
@@ -131,7 +135,6 @@ public class ProductService {
 	public List<ListProductBasicInfo> getAllproducts(long id) {
 		List<Long> ids = this.categoryService.getLeafCategories(id).stream().map(c -> c.getId())
 				.collect(Collectors.toList());
-		System.out.println(ids);
 		return this.getProductPresentInCategories(ids);
 	}
 
@@ -150,6 +153,7 @@ public class ProductService {
 
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
 		return this.productRepository.getAllProductsWithSmallQuantity(SMALL_QUANTITY_INDICATOR).stream()
+				.filter(prod -> prod.getIsDeleted() == 0)
 				.map(product -> new ListProductBasicInfo(product.getTitle(), product.getPrice()))
 				.collect(Collectors.toList());
 	}
@@ -194,7 +198,8 @@ public class ProductService {
 	}
 
 	public List<ListProduct> getAllproducts() {
-		return this.productRepository.findAll().stream().filter(product -> product.getProductId() != null)
+		return this.productRepository.findAll().stream()
+				.filter(product -> product.getProductId() != null && product.getIsDeleted() == 0)
 				.map(product -> {
 					try {
 						return getAllInfoForProduct(product.getProductId());
@@ -209,7 +214,7 @@ public class ProductService {
 
 	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId, Double minPrice, Double maxPrice) {
 		List<ListProductBasicInfo> products = categoryId == null
-				? this.productRepository.findAll().stream()
+				? this.productRepository.findAll().stream().filter(p->p.getIsDeleted()==0)
 						.map(product -> new ListProductBasicInfo(product.getProductId(), product.getTitle(),
 								product.getPrice(), product.getDate()))
 						.collect(Collectors.toList())
@@ -247,8 +252,8 @@ public class ProductService {
 	}
 
 	public List<ListProductBasicInfo> sortCharacteristicsByColour(String sortBy, Long categoryId) {
-		return this.characteristicRepository.findCharacteristicWithColourAndValue(sortBy).stream().filter(
-				charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
+		return this.characteristicRepository.findCharacteristicWithColourAndValue(sortBy).stream()
+				.filter(charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
 				.map(charact -> new ListProductBasicInfo(charact.getProduct().getProductId(),
 						charact.getProduct().getTitle(), charact.getProduct().getPrice(),
 						charact.getProduct().getDate()))
@@ -264,33 +269,31 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 
-//	// TODO should we leave it
-//	@Scheduled(fixedRate = 30*24*60*60000)
-//	public void calculateRating() throws ResourceDoesntExistException {
-//		List<ListProduct> products = getAllproducts();
-//
-//		if (products.isEmpty()) {
-//			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "There are no products");
-//		}
-//
-//		for (ListProduct p : products) {
-//			List<ListReview> reviews = getReviewsForProduct(p.getId());
-//			p.fillReviews(reviews);
-//			Product prod = this.productRepository.findById(p.getId()).get();
-//			if (reviews.isEmpty()) {
-//				prod.setRating(Double.valueOf(0));
-//			} else {
-//				int sum = 0;
-//				for (ListReview r : reviews) {
-//					sum += r.getRating();
-//				}
-//				Double average = (double) (sum / reviews.size());
-//				prod.setRating(average);
-//			}
-//			this.productRepository.save(prod);
-//		}
-//
-//	}
+	public void calculateRating() throws ResourceDoesntExistException {
+		List<ListProduct> products = getAllproducts();
+
+		if (products.isEmpty()) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "There are no products");
+		}
+
+		for (ListProduct p : products) {
+			List<ListReview> reviews = getReviewsForProduct(p.getId());
+			p.fillReviews(reviews);
+			Product prod = this.productRepository.findById(p.getId()).get();
+			if (reviews.isEmpty()) {
+				prod.setRating(Double.valueOf(0));
+			} else {
+				int sum = 0;
+				for (ListReview r : reviews) {
+					sum += r.getRating();
+				}
+				Double average = (double) (sum / reviews.size());
+				prod.setRating(average);
+			}
+			this.productRepository.save(prod);
+		}
+
+	}
 
 	public List<ListProductBasicInfo> searchPrice(double min, double max) {
 

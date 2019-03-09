@@ -93,6 +93,7 @@ public class ProductController {
 	public List<ListProductBasicInfo> getAllproductsForCategory(@RequestParam("categoryId") long id) {
 		return this.productService.getAllproducts(id);
 	}
+	
 	//TODO fix dto
 	@GetMapping("/productsQuantity")
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
@@ -197,10 +198,5 @@ public class ProductController {
 			@RequestParam(name="sortBy", required=false) String sortBy,
 			@RequestParam(name="categoryId", required=false) Long categoryId){
 		return this.productService.sortCharacteristicsBySize(sortBy, categoryId);
-	}
-
-	
-	
-	
-		
+	}		
 }
