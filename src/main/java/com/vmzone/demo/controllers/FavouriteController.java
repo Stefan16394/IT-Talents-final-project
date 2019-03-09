@@ -3,6 +3,7 @@ package com.vmzone.demo.controllers;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,6 @@ import com.vmzone.demo.dto.ListFavouriteProductDTO;
 import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Favourite;
-import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.FavouritesService;
 import com.vmzone.demo.utils.SessionManager;
 
@@ -29,7 +29,7 @@ public class FavouriteController {
 	FavouritesService favouritesService;
 	
 	@PostMapping("/favourite")
-	public Favourite addFavourite(@RequestBody AddToFavouritesDTO fav, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+	public Favourite addFavourite(@RequestBody @Valid AddToFavouritesDTO fav, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You are not logged in! You should log in first!");
 		}

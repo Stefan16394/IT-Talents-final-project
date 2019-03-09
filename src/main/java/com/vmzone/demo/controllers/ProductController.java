@@ -141,9 +141,12 @@ public class ProductController {
 		@GetMapping("/productsSort")
 		public List<ListProductBasicInfo> getAllproducts(
 				@RequestParam(name="sortBy", required=false) String sortBy,
-				@RequestParam(name="categoryId", required=false) Long categoryId) {
-			return this.productService.getAllproducts(sortBy, categoryId);
+				@RequestParam(name="categoryId", required=false) Long categoryId,
+				@RequestParam(name ="minPrice",required = false) Double min ,
+				@RequestParam(name ="maxPrice",required = false) Double max) {
+			return this.productService.getAllproducts(sortBy, categoryId,min,max);
 		}
+		
 	//TODO must be a thread
 //	@PostMapping("/calculate")
 //	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
@@ -166,6 +169,7 @@ public class ProductController {
 		}
 		return this.productInSaleService.addProductInSale(product);
 	}
+	
 	@GetMapping("/sales")
 	public List<ListProductsInSale> getAllProductsInsale() {
 		return this.productInSaleService.showProductsInSale();

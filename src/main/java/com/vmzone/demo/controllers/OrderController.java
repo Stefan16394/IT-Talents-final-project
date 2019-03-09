@@ -2,7 +2,6 @@ package com.vmzone.demo.controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import com.vmzone.demo.exceptions.NotEnoughQuantityException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Order;
 import com.vmzone.demo.models.OrderDetails;
-import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.OrderService;
 import com.vmzone.demo.utils.SessionManager;
 
@@ -29,9 +27,9 @@ public class OrderController {
 	private OrderService orderService;
 
 	@PostMapping("/order")
-	public Order createNewOrder(HttpSession session) throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException {
+	public Order createNewOrder(HttpSession session) throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		return this.orderService.createNewOrder(SessionManager.getLoggedUser(session));
 	}

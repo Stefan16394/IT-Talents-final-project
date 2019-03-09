@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import com.vmzone.demo.dto.AddReviewDTO;
 import com.vmzone.demo.dto.EditReviewDTO;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.Category;
 import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.Review;
 import com.vmzone.demo.models.User;
@@ -100,7 +101,7 @@ public class ReviewServiceTests {
 	@Test
 	public void testAddReviewWithCorrectInput() throws ResourceDoesntExistException {
 		Optional<User> user = Optional.of(new User());
-		Optional<Product> product = Optional.of(new Product());
+		Optional<Product> product = Optional.of(new Product(1L, new Category(), "title", "info", 0, 23, 23, null, 1, 0, 0, "no", null));
 		when(userRepository.findById(DEFAULT_ID_TO_SEARCH)).thenReturn(user);
 		when(productRepository.findById(DEFAULT_ID_TO_SEARCH)).thenReturn(product);
 		reviewService.addReview(new AddReviewDTO(DEFAULT_ID_TO_SEARCH, "Review", 4),DEFAULT_ID_TO_SEARCH);

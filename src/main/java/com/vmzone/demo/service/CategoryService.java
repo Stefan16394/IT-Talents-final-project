@@ -37,6 +37,8 @@ public class CategoryService {
 		if(checkExists != null) {
 			throw new ResourceAlreadyExistsException("This category already exists!");
 		}
+		
+		
 		Category newCategory = new Category(category.getName(), category.getParent_id() == null ? null
 				: this.categoryRepository.findById(category.getParent_id()).get());
 		return this.categoryRepository.save(newCategory);

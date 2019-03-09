@@ -1,6 +1,8 @@
 package com.vmzone.demo.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -8,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddCharacteristicDTO;
@@ -56,12 +57,12 @@ public class ProductService {
 		}
 		Product newProduct = new Product(category, product.getTitle(), product.getInformation(), product.getInStock(),
 				product.getDelivery(), product.getQuantity(), product.getInSale(), product.getDetailedInformation());
-		
+
 		return this.productRepository.save(newProduct);
 	}
 
-	
-	public long addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic) throws ResourceAlreadyExistsException, ResourceDoesntExistException {
+	public long addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic)
+			throws ResourceAlreadyExistsException, ResourceDoesntExistException {
 		Characteristic checkExists = this.characteristicRepository.findNameOfCharacteristicForProduct(productId,
 				characteristic.getValue());
 		if (checkExists != null) {
@@ -73,7 +74,7 @@ public class ProductService {
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException("There is no such category");
 		}
-	
+
 		Characteristic newCharacteristic = new Characteristic(this.productRepository.findById(productId).get(),
 				characteristic.getName(), characteristic.getValue());
 		this.characteristicRepository.save(newCharacteristic);
@@ -107,7 +108,7 @@ public class ProductService {
 		Product p = null;
 		try {
 			this.productRepository.findById(id).get();
-		}catch (NoSuchElementException e) {
+		} catch (NoSuchElementException e) {
 			throw new BadCredentialsException("There is no such product");
 		}
 
@@ -130,6 +131,7 @@ public class ProductService {
 	public List<ListProductBasicInfo> getAllproducts(long id) {
 		List<Long> ids = this.categoryService.getLeafCategories(id).stream().map(c -> c.getId())
 				.collect(Collectors.toList());
+		System.out.println(ids);
 		return this.getProductPresentInCategories(ids);
 	}
 
@@ -139,7 +141,8 @@ public class ProductService {
 		List<ListProductBasicInfo> result = new ArrayList<>();
 		for (Object o : resultSet) {
 			Object[] row = (Object[]) o;
-			ListProductBasicInfo p = new ListProductBasicInfo(Long.parseLong(row[0].toString()), row[2].toString());
+			ListProductBasicInfo p = new ListProductBasicInfo(Long.parseLong(row[0].toString()), row[2].toString(),
+					Double.parseDouble(row[12].toString()), Timestamp.valueOf(row[6].toString()).toLocalDateTime());
 			result.add(p);
 		}
 		return result;
@@ -163,15 +166,14 @@ public class ProductService {
 		this.productRepository.save(product);
 	}
 
-
-	public Product editProduct( long id ,EditProductDTO editedProduct) throws ResourceDoesntExistException {
+	public Product editProduct(long id, EditProductDTO editedProduct) throws ResourceDoesntExistException {
 		Product product = null;
 		try {
 			product = this.productRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
 		}
-	
+
 		Category cat = null;
 		try {
 			cat = this.categoryRepository.findById(editedProduct.getCategoryId()).get();
@@ -205,35 +207,43 @@ public class ProductService {
 				}).collect(Collectors.toList());
 	}
 
-	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId) {
-		return this.productRepository.findAll().stream()
-				.filter(product -> categoryId == null || product.getCategory().getCategoryId().equals(categoryId))
-				.sorted((p1, p2) -> {
+	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId, Double minPrice, Double maxPrice) {
+		List<ListProductBasicInfo> products = categoryId == null
+				? this.productRepository.findAll().stream()
+						.map(product -> new ListProductBasicInfo(product.getProductId(), product.getTitle(),
+								product.getPrice(), product.getDate()))
+						.collect(Collectors.toList())
+				: this.getAllproducts(categoryId);
+		
+		Comparator<ListProductBasicInfo> comparator = (p1,p2)->p1.getDate().compareTo(p2.getDate());
+				if (sortBy != null) {
 					switch (sortBy) {
 					case "newest":
-						return p1.getDate().compareTo(p2.getDate());
+						comparator =(p1,p2)->  p1.getDate().compareTo(p2.getDate());
+						break;
 					case "oldest":
-						return p2.getDate().compareTo(p1.getDate());
+						comparator =(p1,p2)-> p2.getDate().compareTo(p1.getDate());
+						break;
 					case "ascending price":
-						return Double.compare(p1.getPrice(), p2.getPrice());
+						comparator =(p1,p2)-> Double.compare(p1.getPrice(), p2.getPrice());
+						break;
 					case "descending price":
-						return Double.compare(p2.getPrice(), p1.getPrice());
+						comparator =(p1,p2)-> Double.compare(p2.getPrice(), p1.getPrice());
+						break;
 					case "ascending alphabetic":
-						return p1.getTitle().compareTo(p2.getTitle());
+						comparator =(p1,p2)-> p1.getTitle().compareTo(p2.getTitle());
+						break;
 					case "descending alphabetic":
-						return p2.getTitle().compareTo(p1.getTitle());
-					case "fastest delivery":
-						return p1.getDelivery() - p2.getDelivery();
-					case "ascending rating":
-						return Double.compare(p1.getRating(), p2.getRating());
-					case "descending rating":
-						return Double.compare(p2.getRating(), p1.getRating());
+						comparator =(p1,p2)-> p2.getTitle().compareTo(p1.getTitle());
+						break;
 					default:
-						return 1;
+						comparator= (p1,p2)->  p1.getDate().compareTo(p2.getDate());
 					}
-				}).map(product -> new ListProductBasicInfo(product.getProductId(), product.getTitle(),
-						product.getPrice(), product.getDate()))
-				.collect(Collectors.toList());
+				}
+		return products.stream().filter(p -> {
+			System.out.println(p.getPrice());
+			return minPrice == null || maxPrice == null || p.getPrice() >= minPrice && p.getPrice() <= maxPrice;
+		}).sorted(comparator).collect(Collectors.toList());
 	}
 
 	public List<ListProductBasicInfo> sortCharacteristicsByColour(String sortBy, Long categoryId) {
@@ -254,7 +264,7 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 
-	// TODO should we leave it
+//	// TODO should we leave it
 //	@Scheduled(fixedRate = 30*24*60*60000)
 //	public void calculateRating() throws ResourceDoesntExistException {
 //		List<ListProduct> products = getAllproducts();

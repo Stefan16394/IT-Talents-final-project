@@ -1,5 +1,7 @@
 package com.vmzone.demo.dto;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class AddToFavouritesDTO {
-	
+	@NotNull(message = "product id should not be empty")
 	private Long productId;
 
 }
