@@ -57,6 +57,7 @@ public class OrderService {
 				OrderDetails orderDetail = new OrderDetails(item.getQuantity(), order.getOrderId(), p);
 				this.orderDetailsRepository.save(orderDetail);
 			}
+			this.orderRepository.clearShoppingCart(user.getUserId());
 			return order;
 		}catch(NotEnoughQuantityException e) { 
 			throw e;

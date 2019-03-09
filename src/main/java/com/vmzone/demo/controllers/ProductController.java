@@ -145,16 +145,16 @@ public class ProductController {
 			return this.productService.getAllproducts(sortBy, categoryId);
 		}
 	//TODO must be a thread
-	@PostMapping("/calculate")
-	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
-		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
-		}
-		if(!SessionManager.isAdmin(session)) {
-			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
-		}
-		this.productService.calculateRating();
-	}
+//	@PostMapping("/calculate")
+//	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+//		if (!SessionManager.isUserLoggedIn(session)) {
+//			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+//		}
+//		if(!SessionManager.isAdmin(session)) {
+//			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
+//		}
+//		this.productService.calculateRating();
+//	}
 	
 	@PostMapping("/sale")
 	public ProductInSale addProductInSale(@RequestBody AddProductInSaleDTO product, HttpSession session) throws VMZoneException {

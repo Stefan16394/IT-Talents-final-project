@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddReviewDTO;
 import com.vmzone.demo.dto.EditReviewDTO;
-import com.vmzone.demo.dto.ListProduct;
 import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.Review;
+import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;
 import com.vmzone.demo.repository.UserRepository;
@@ -64,6 +64,15 @@ public class ReviewService {
 
 		return this.reviewRepository.save(review);
 	}
+	
+	public Review getReviewById(long id,long userId) throws ResourceDoesntExistException {
+		Review review = this.reviewRepository.findReviewForUser(userId, id);
+		if (review == null) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Review doesn't exist or it is not your review");
+		}
+		return review;
+	}
+	
 	private List<ListReview> getReviewsForProduct(long id) {
 		return this.reviewRepository.findReviewsForProduct(id).stream()
 				.map(review -> new ListReview(review.getReviewId(), review.getReview(), review.getRating()))

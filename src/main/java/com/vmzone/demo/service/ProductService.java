@@ -255,32 +255,32 @@ public class ProductService {
 	}
 
 	// TODO should we leave it
-	@Scheduled(fixedRate = 30*24*60*60000)
-	public void calculateRating() throws ResourceDoesntExistException {
-		List<ListProduct> products = getAllproducts();
-
-		if (products.isEmpty()) {
-			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "There are no products");
-		}
-
-		for (ListProduct p : products) {
-			List<ListReview> reviews = getReviewsForProduct(p.getId());
-			p.fillReviews(reviews);
-			Product prod = this.productRepository.findById(p.getId()).get();
-			if (reviews.isEmpty()) {
-				prod.setRating(Double.valueOf(0));
-			} else {
-				int sum = 0;
-				for (ListReview r : reviews) {
-					sum += r.getRating();
-				}
-				Double average = (double) (sum / reviews.size());
-				prod.setRating(average);
-			}
-			this.productRepository.save(prod);
-		}
-
-	}
+//	@Scheduled(fixedRate = 30*24*60*60000)
+//	public void calculateRating() throws ResourceDoesntExistException {
+//		List<ListProduct> products = getAllproducts();
+//
+//		if (products.isEmpty()) {
+//			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "There are no products");
+//		}
+//
+//		for (ListProduct p : products) {
+//			List<ListReview> reviews = getReviewsForProduct(p.getId());
+//			p.fillReviews(reviews);
+//			Product prod = this.productRepository.findById(p.getId()).get();
+//			if (reviews.isEmpty()) {
+//				prod.setRating(Double.valueOf(0));
+//			} else {
+//				int sum = 0;
+//				for (ListReview r : reviews) {
+//					sum += r.getRating();
+//				}
+//				Double average = (double) (sum / reviews.size());
+//				prod.setRating(average);
+//			}
+//			this.productRepository.save(prod);
+//		}
+//
+//	}
 
 	public List<ListProductBasicInfo> searchPrice(double min, double max) {
 
