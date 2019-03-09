@@ -3,6 +3,7 @@ package com.vmzone.demo.controllers;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("/product")
-	public Product addProduct(@RequestBody AddProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+	public Product addProduct(@RequestBody @Valid AddProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
@@ -66,7 +67,7 @@ public class ProductController {
 		return this.productService.addProduct(product);
 	}
 	@PostMapping("/product/characteristic/{id}")
-	public long addCharacteristicToProduct(@PathVariable("id") Long productId, @RequestBody AddCharacteristicDTO characteristic, HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
+	public long addCharacteristicToProduct(@PathVariable("id") Long productId, @RequestBody @Valid AddCharacteristicDTO characteristic, HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
@@ -112,7 +113,7 @@ public class ProductController {
 	}
 	
 	@PutMapping("/product/edit/{id}")
-	public Product editProduct(@PathVariable long id, @RequestBody EditProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+	public Product editProduct(@PathVariable long id, @RequestBody @Valid EditProductDTO product, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
@@ -149,19 +150,19 @@ public class ProductController {
 		}
 		
 	//TODO must be a thread
-//	@PostMapping("/calculate")
-//	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
-//		if (!SessionManager.isUserLoggedIn(session)) {
-//			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
-//		}
-//		if(!SessionManager.isAdmin(session)) {
-//			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
-//		}
-//		this.productService.calculateRating();
-//	}
+	@PostMapping("/calculate")
+	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
+		if (!SessionManager.isUserLoggedIn(session)) {
+			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+		}
+		if(!SessionManager.isAdmin(session)) {
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
+		}
+		this.productService.calculateRating();
+	}
 	
 	@PostMapping("/sale")
-	public ProductInSale addProductInSale(@RequestBody AddProductInSaleDTO product, HttpSession session) throws VMZoneException {
+	public ProductInSale addProductInSale(@RequestBody @Valid AddProductInSaleDTO product, HttpSession session) throws VMZoneException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}

@@ -114,7 +114,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/forgottenPassword")
-	public void forgottenPassword(@RequestBody ForgottenPasswordDTO pass) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
+	public void forgottenPassword(@RequestBody @Valid ForgottenPasswordDTO pass) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
 		this.userService.forgottenPassword(pass.getEmail());
 	}
 	
@@ -133,7 +133,7 @@ public class UserController {
 	
 	
 	@PostMapping("/contactUs")
-	public void contactUs(@RequestBody ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
+	public void contactUs(@RequestBody @Valid ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
 		this.userService.contactUs(contact);
 	}
 	

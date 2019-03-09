@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -23,13 +24,13 @@ public class RegisterDTO {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
-	@NotNull(message="first name should not be empty")
+	@NotBlank(message="first name should not be empty")
 	private String firstName;
-	@NotNull(message ="last name should not be empty")
+	@NotBlank(message ="last name should not be empty")
 	private String lastName;
 	@Email
     private String email;
-    @NotNull(message = "password should be at least 4 characters")
+    @NotBlank(message = "password should be at least 4 characters")
     @Size(min = 4, max = 50, message="password should be at least 4 characters")
 	private String password;
     
