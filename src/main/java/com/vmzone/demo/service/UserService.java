@@ -14,6 +14,7 @@ import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -120,7 +121,7 @@ public class UserService {
 		u.setPassword(hashedPassword);
 		this.userRepository.save(u);
 	}
-	//TODO test it if it works
+	
 	public void forgottenPassword(String email) throws ResourceDoesntExistException, AddressException,
 			InvalidEmailException, MessagingException, IOException {
 		User u = this.userRepository.findByEmail(email);
@@ -134,9 +135,10 @@ public class UserService {
 		u.setPassword(hashedPassword);
 		this.userRepository.save(u);
 	}
-
+	
+	@Scheduled(fixedRate = 7*24*60*60000)
 	public void sendSubscribed() throws AddressException, InvalidEmailException, MessagingException, IOException {
-		List<String> emails = this.userRepository.findAll().stream().filter(user -> user.getIsSubscribed() == 0)
+		List<String> emails = this.userRepository.findAll().stream().filter(user -> user.getIsSubscribed() == 1)
 				.map(user -> user.getEmail()).collect(Collectors.toList());
 
 		EmailSender.sendSubscripedPromotions(emails);

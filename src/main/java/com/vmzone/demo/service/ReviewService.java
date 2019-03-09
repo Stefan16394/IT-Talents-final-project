@@ -2,6 +2,7 @@ package com.vmzone.demo.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.vmzone.demo.dto.AddReviewDTO;
 import com.vmzone.demo.dto.EditReviewDTO;
+import com.vmzone.demo.dto.ListProduct;
+import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
+import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.Review;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;
@@ -31,7 +35,9 @@ public class ReviewService {
 		try {
 			Review newReview = new Review(this.productRepository.findById(review.getProductId()).get(),
 					this.userRepository.findById(id).get(), review.getReview(), review.getRating());
-			return this.reviewRepository.save(newReview);
+			Review rev = this.reviewRepository.save(newReview);
+			calculateRating(review.getProductId());
+			return rev;
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Invalid product or user");
 		}
@@ -58,5 +64,33 @@ public class ReviewService {
 
 		return this.reviewRepository.save(review);
 	}
+	private List<ListReview> getReviewsForProduct(long id) {
+		return this.reviewRepository.findReviewsForProduct(id).stream()
+				.map(review -> new ListReview(review.getReviewId(), review.getReview(), review.getRating()))
+				.collect(Collectors.toList());
+	}
+	
+	private void calculateRating(long id) throws ResourceDoesntExistException {
+		Product p = null;	
+		try {
+				p = this.productRepository.findById(id).get();
+			} catch (NoSuchElementException e) {
+				throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Invalid product or user");
+			}
+		
+			List<ListReview> reviews = getReviewsForProduct(p.getProductId());
+			if (reviews.isEmpty()) {
+				p.setRating(Double.valueOf(0));
+			} else {
+				int sum = 0;
+				for (ListReview r : reviews) {
+					sum += r.getRating();
+				}
+				Double average = (double) (sum / reviews.size());
+				p.setRating(average);
+			}
+			this.productRepository.save(p);
+		}
+
 
 }
