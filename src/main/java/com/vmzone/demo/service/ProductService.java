@@ -179,7 +179,7 @@ public class ProductService {
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
 		return this.productRepository.getAllProductsWithSmallQuantity(SMALL_QUANTITY_INDICATOR).stream()
 				.filter(prod -> prod.getIsDeleted() == 0)
-				.map(product -> new ListProductBasicInfo(product.getTitle(), product.getPrice()))
+				.map(product -> new ListProductBasicInfo(product.getProductId(), product.getTitle(), product.getPrice(), product.getDate()))
 				.collect(Collectors.toList());
 	}
 

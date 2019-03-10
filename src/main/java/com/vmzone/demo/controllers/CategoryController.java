@@ -20,7 +20,6 @@ import com.vmzone.demo.exceptions.BadCredentialsException;
 import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Category;
-import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.CategoryService;
 import com.vmzone.demo.utils.SessionManager;
 

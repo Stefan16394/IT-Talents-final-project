@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.vmzone.demo.dto.AddProductInSaleDTO;
 import com.vmzone.demo.dto.ListProductsInSale;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
-import com.vmzone.demo.exceptions.VMZoneException;
 import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.ProductInSale;
 import com.vmzone.demo.repository.ProductInSaleRepository;

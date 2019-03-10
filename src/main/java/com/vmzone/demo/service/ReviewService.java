@@ -14,7 +14,6 @@ import com.vmzone.demo.dto.ListReview;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.Review;
-import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;
 import com.vmzone.demo.repository.UserRepository;
