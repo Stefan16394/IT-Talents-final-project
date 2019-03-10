@@ -35,7 +35,6 @@ public class FavouritesService {
 	private ProductRepository productRepository;
 	
 	public Favourite addToFavourites(AddToFavouritesDTO fav, long id ) throws ResourceDoesntExistException {
-		System.out.println(fav);
 		try {
 		Favourite newFav = new Favourite(
 				this.productRepository.findById(fav.getProductId()).get(),

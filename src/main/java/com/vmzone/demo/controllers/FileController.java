@@ -53,7 +53,7 @@ public class FileController {
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id, HttpSession session ) throws ResourceDoesntExistException, BadCredentialsException {
     	
     	if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		if(!SessionManager.isAdmin(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You do not have access to this feature!");
@@ -74,7 +74,7 @@ public class FileController {
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("id") Long id, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
        
     	if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		if(!SessionManager.isAdmin(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You do not have access to this feature!");
@@ -97,7 +97,7 @@ public class FileController {
     @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request, HttpSession session) throws MalformedURLException, ResourceDoesntExistException, BadCredentialsException {
     	if (session.getAttribute("user") == null) {
-			throw new ResourceDoesntExistException("You are not logged in! You should log in first!");
+			throw new BadCredentialsException("You are not logged in! You should log in first!");
 		}
 		if(!((User) session.getAttribute("user")).isAdmin()) {
 			throw new BadCredentialsException("You do not have access to this feature!");

@@ -64,33 +64,33 @@ public class UserController {
 	}
 	
 	@GetMapping("/cart")
-	public List<ShoppingCartItem> getShoppingCart(HttpSession session) throws ResourceDoesntExistException {
+	public List<ShoppingCartItem> getShoppingCart(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		return this.userService.getShoppingCart(SessionManager.getLoggedUserId(session));
 	}
 	
 	@PostMapping("/product/cart")
-	public long addProductToCart(@RequestBody @Valid CartProductDTO addProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException {
+	public long addProductToCart(@RequestBody @Valid CartProductDTO addProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		return this.userService.addProductToCart(addProduct,SessionManager.getLoggedUserId(session));
 	}
 	
 	@PutMapping("/product/cart/update")
-	public long updateProductInCart(@RequestBody @Valid CartProductDTO editProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException {
+	public long updateProductInCart(@RequestBody @Valid CartProductDTO editProduct, HttpSession session) throws ResourceDoesntExistException, NotEnoughQuantityException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		return this.userService.updateProductInCart(editProduct, SessionManager.getLoggedUserId(session));
 	}
 	
 	@DeleteMapping("/product/cart/delete")
-	public void deleteProductInCart(@RequestParam("product") long productId,HttpSession session) throws ResourceDoesntExistException {
+	public void deleteProductInCart(@RequestParam("product") long productId,HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		this.userService.deleteProductInCart(productId, SessionManager.getLoggedUserId(session));
 	}
