@@ -6,6 +6,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class EditProfileDTO {
 		@Email
 	    private String email;
 		@NotBlank
+		@Pattern(regexp = "^Male|Female$",message = "Gender should be Male or Female")
 		private String gender;
 	    @Min(0)
 	    @Max(1)

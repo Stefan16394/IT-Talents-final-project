@@ -8,6 +8,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
@@ -34,6 +35,7 @@ public class RegisterDTO {
     @Size(min = 4, max = 50, message="password should be at least 4 characters")
 	private String password;
     
+    @Pattern(regexp = "^Male|Female$",message = "Gender should be Male or Female")
 	private String gender;
 	//TODO should not be here
 	
