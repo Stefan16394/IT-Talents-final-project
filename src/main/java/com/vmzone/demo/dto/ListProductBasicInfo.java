@@ -2,6 +2,8 @@ package com.vmzone.demo.dto;
 
 import java.time.LocalDateTime;
 
+import com.vmzone.demo.models.Photo;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,7 @@ public class ListProductBasicInfo {
 	private String title;
 	private double price;
 	private LocalDateTime date;
+	private Photo photo;
 	
 	public ListProductBasicInfo(long id, String title){
 		this.id = id;
@@ -29,6 +32,4 @@ public class ListProductBasicInfo {
 		this.price = price;
 	}
 	
-	// TO DO ADD MORE FIELDS HERE!!!
-
 }

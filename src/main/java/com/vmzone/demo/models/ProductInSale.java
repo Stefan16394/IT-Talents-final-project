@@ -31,7 +31,6 @@ public class ProductInSale {
 	@JoinColumn(name = "product_id")
 	private Product products;
 
-	
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
 	private int discountPercentage;
