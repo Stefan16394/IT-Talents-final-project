@@ -90,17 +90,17 @@ public class UserController {
 	
 	
 	@PutMapping("/editProfile")
-	public User editProfile(@RequestBody @Valid EditProfileDTO user, HttpSession session) throws ResourceDoesntExistException, ResourceAlreadyExistsException {
+	public User editProfile(@RequestBody @Valid EditProfileDTO user, HttpSession session) throws ResourceDoesntExistException, ResourceAlreadyExistsException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		return this.userService.editProfile(SessionManager.getLoggedUserId(session), user);
 	}
 	
 	@PostMapping("/changePassword")
-	public void changePassword(@RequestBody @Valid ChangePasswordDTO pass, HttpSession session) throws ResourceDoesntExistException {
+	public void changePassword(@RequestBody @Valid ChangePasswordDTO pass, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		this.userService.changePassword(SessionManager.getLoggedUserId(session), pass);
 	}
@@ -115,7 +115,7 @@ public class UserController {
 	public void sendSubcribed(HttpSession session) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException, BadCredentialsException {
 		
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		if(!SessionManager.isAdmin(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
@@ -132,7 +132,7 @@ public class UserController {
 	@PutMapping("/user/remove/{id}")
 	public void removeUser(@PathVariable long id, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		if(!SessionManager.isAdmin(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You do not have access to this feature!");
@@ -142,10 +142,10 @@ public class UserController {
 	}
 	
 	@PostMapping("/user/logout")
-	public void logout(HttpSession session) throws ResourceDoesntExistException {
+	public void logout(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		
 		if (!SessionManager.isUserLoggedIn(session)) {
-			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED,"You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,"You are not logged in! You should log in first!");
 		}
 		
 		session.invalidate();
