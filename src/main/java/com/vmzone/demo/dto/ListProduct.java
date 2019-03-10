@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.vmzone.demo.models.Photo;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,6 +25,7 @@ public class ListProduct {
 	
 	private List<ListReview> reviews = new LinkedList<>();
 	private List<AddCharacteristicDTO> characteristics = new LinkedList<>();
+	private List<Photo> photos = new LinkedList<>();
 
 	public ListProduct(Long id, String title, String information, int inStock, int delivery, String detailedInformation, Double rating) {
 		super();

@@ -44,14 +44,6 @@ import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.UserService;
 import com.vmzone.demo.utils.SessionManager;
 
-/**
- * Rest Controller for managing users requests
- * 
- * @author Sabiha Djurina and Stefan Rangelov
- * 
- *
- */
-
 @RestController
 public class UserController {
 	@Autowired
@@ -109,7 +101,6 @@ public class UserController {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new ResourceDoesntExistException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
-		
 		return this.userService.editProfile(SessionManager.getLoggedUserId(session), user);
 	}
 	
@@ -122,7 +113,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/forgottenPassword")
-	public void forgottenPassword(@RequestBody @Valid ForgottenPasswordDTO pass) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
+	public void forgottenPassword(@RequestBody ForgottenPasswordDTO pass) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException {
 		this.userService.forgottenPassword(pass.getEmail());
 	}
 	
@@ -141,7 +132,7 @@ public class UserController {
 	
 	
 	@PostMapping("/contactUs")
-	public void contactUs(@RequestBody @Valid ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
+	public void contactUs(@RequestBody ContactUsDTO contact) throws InvalidEmailException, AddressException, MessagingException, IOException {
 		this.userService.contactUs(contact);
 	}
 	

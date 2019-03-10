@@ -1,7 +1,5 @@
 package com.vmzone.demo.service;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,18 +21,13 @@ import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.Category;
 import com.vmzone.demo.models.Characteristic;
+import com.vmzone.demo.models.Photo;
 import com.vmzone.demo.models.Product;
 import com.vmzone.demo.repository.CategoryRepository;
 import com.vmzone.demo.repository.CharacteristicsRepository;
+import com.vmzone.demo.repository.PhotoRepository;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;
-
-/**
- * Service layer communicating with category repository, product repository, review repository for managing product requests
- * 
- * @author Stefan Rangelov and Sabiha Djurina
- *
- */
 
 @Service
 public class ProductService {
@@ -51,6 +44,9 @@ public class ProductService {
 
 	@Autowired
 	private ReviewRepository reviewRepository;
+	
+	@Autowired
+	private PhotoRepository photoRepository;
 
 	@Autowired
 	private CharacteristicsRepository characteristicRepository;
@@ -62,21 +58,12 @@ public class ProductService {
 		} catch (NoSuchElementException e) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "There is no such category");
 		}
+		
 		Product newProduct = new Product(category, product.getTitle(), product.getInformation(), product.getInStock(),
 				product.getDelivery(), product.getQuantity(), product.getInSale(), product.getDetailedInformation());
 
 		return this.productRepository.save(newProduct);
 	}
-	
-	/**
-	 * Add characteristic for a product
-	 * 
-	 * @param productId -  id of product object stored in db
-	 * @param characteristic - dto with info for the characteristic
-	 * @return id of the newly added characteristic
-	 * @throws ResourceAlreadyExistsException - when there is a characteristic with that name for this product in db
-	 * @throws ResourceDoesntExistException - when there is no such product in db
-	 */
 
 	public long addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic)
 			throws ResourceAlreadyExistsException, ResourceDoesntExistException {
@@ -89,7 +76,7 @@ public class ProductService {
 		try {
 			this.productRepository.findById(productId).get();
 		} catch (NoSuchElementException e) {
-			throw new ResourceDoesntExistException("There is no such product");
+			throw new ResourceDoesntExistException("There is no such category");
 		}
 
 		Characteristic newCharacteristic = new Characteristic(this.productRepository.findById(productId).get(),
@@ -121,14 +108,6 @@ public class ProductService {
 				.map(charact -> new AddCharacteristicDTO(charact.getName(), charact.getValue()))
 				.collect(Collectors.toList());
 	}
-	
-	/**
-	 * Get information in dto for a product
-	 * 
-	 * @param id -  id of product object stored in db
-	 * @return - dto with info for the product
-	 * @throws BadCredentialsException - when there is no such product in db or the product has been deleted
-	 */
 
 	public ListProduct getAllInfoForProduct(long id) throws BadCredentialsException {
 		Product p = null;
@@ -143,7 +122,8 @@ public class ProductService {
 
 		List<ListReview> reviews = getReviewsForProduct(id);
 		List<AddCharacteristicDTO> characteristics = getCharacteristicsForProduct(id);
-
+		List<Photo> photos = photoRepository.findPhotosForProductById(p.getProductId());
+			
 		ListProduct info = new ListProduct(p.getProductId(), p.getTitle(), p.getInformation(), p.getInStock(),
 				p.getDelivery(), p.getDetailedInformation(), p.getRating());
 		if (!reviews.isEmpty()) {
@@ -152,28 +132,23 @@ public class ProductService {
 		if (!characteristics.isEmpty()) {
 			info.fillCharacteristics(characteristics);
 		}
+		if(!photos.isEmpty()) {
+			info.setPhotos(photos);
+		}
 
 		return info;
 
 	}
 
-	public List<ListProductBasicInfo> getAllproducts(long id) {
+	public List<Product> getAllproducts(long id) {
 		List<Long> ids = this.categoryService.getLeafCategories(id).stream().map(c -> c.getId())
 				.collect(Collectors.toList());
 		return this.getProductPresentInCategories(ids);
 	}
 
-	public List<ListProductBasicInfo> getProductPresentInCategories(List<Long> categoriesIds) {
+	public List<Product> getProductPresentInCategories(List<Long> categoriesIds) {
 
-		List resultSet = this.productRepository.getProductsPresentInCategories(categoriesIds);
-		List<ListProductBasicInfo> result = new ArrayList<>();
-		for (Object o : resultSet) {
-			Object[] row = (Object[]) o;
-			ListProductBasicInfo p = new ListProductBasicInfo(Long.parseLong(row[0].toString()), row[2].toString(),
-					Double.parseDouble(row[12].toString()), Timestamp.valueOf(row[6].toString()).toLocalDateTime());
-			result.add(p);
-		}
-		return result;
+		return this.productRepository.getProductsPresentInCategories(categoriesIds);
 	}
 
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
@@ -194,15 +169,6 @@ public class ProductService {
 		product.setIsDeleted(1);
 		this.productRepository.save(product);
 	}
-	
-	/**
-	 * Edit product
-	 * 
-	 * @param id -  id of product object stored in db
-	 * @param editedProduct - dto eith info for edited product
-	 * @return Product - newely edited product
-	 * @throws ResourceDoesntExistException - when the product or category does not exist in db
-	 */
 
 	public Product editProduct(long id, EditProductDTO editedProduct) throws ResourceDoesntExistException {
 		Product product = null;
@@ -245,22 +211,10 @@ public class ProductService {
 
 				}).collect(Collectors.toList());
 	}
-	
-	/**
-	 * get basic info for filtered products
-	 * 
-	 * @param sortBy - newest, oldest, ascending price, descending price, ascending alphabet, descending alphabet
-	 * @param categoryId -  id of category object stored in db
-	 * @param minPrice - min price for searching
-	 * @param maxPrice - max price for searching
-	 * @return list of dto objects
-	 */
 
 	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId, Double minPrice, Double maxPrice) {
-		List<ListProductBasicInfo> products = categoryId == null
+		List<Product> products = categoryId == null
 				? this.productRepository.findAll().stream().filter(p->p.getIsDeleted()==0)
-						.map(product -> new ListProductBasicInfo(product.getProductId(), product.getTitle(),
-								product.getPrice(), product.getDate()))
 						.collect(Collectors.toList())
 				: this.getAllproducts(categoryId);
 		
@@ -289,36 +243,43 @@ public class ProductService {
 						comparator= (p1,p2)->  p1.getDate().compareTo(p2.getDate());
 					}
 				}
-		return products.stream().filter(p -> {
-			System.out.println(p.getPrice());
-			return minPrice == null || maxPrice == null || p.getPrice() >= minPrice && p.getPrice() <= maxPrice;
-		}).sorted(comparator).collect(Collectors.toList());
+		return products.stream()
+			.filter(p -> minPrice == null || maxPrice == null || p.getPrice() >= minPrice && p.getPrice() <= maxPrice)
+			.map(p->{
+				List<Photo> photos = photoRepository.findPhotosForProductById(p.getProductId());
+				Photo photo = photos.isEmpty()? null :photos.get(0);
+				return new ListProductBasicInfo(p.getProductId(), p.getTitle(), p.getPrice(), p.getDate(), photo);
+			})
+
+		.sorted(comparator).collect(Collectors.toList());
 	}
 
 	public List<ListProductBasicInfo> sortCharacteristicsByColour(String sortBy, Long categoryId) {
 		return this.characteristicRepository.findCharacteristicWithColourAndValue(sortBy).stream()
 				.filter(charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
-				.map(charact -> new ListProductBasicInfo(charact.getProduct().getProductId(),
+				.map(charact -> {
+				List<Photo> photos = photoRepository.findPhotosForProductById(charact.getProduct().getProductId());
+				Photo photo = photos.isEmpty()? null :photos.get(0);
+				return new ListProductBasicInfo(charact.getProduct().getProductId(),
 						charact.getProduct().getTitle(), charact.getProduct().getPrice(),
-						charact.getProduct().getDate()))
+						charact.getProduct().getDate(),photo);
+		        })
 				.collect(Collectors.toList());
 	}
 
 	public List<ListProductBasicInfo> sortCharacteristicsBySize(String sortBy, Long categoryId) {
 		return this.characteristicRepository.findCharacteristicWithSizeAndValue(sortBy).stream().filter(
 				charact -> categoryId == null || charact.getProduct().getCategory().getCategoryId().equals(categoryId))
-				.map(charact -> new ListProductBasicInfo(charact.getProduct().getProductId(),
-						charact.getProduct().getTitle(), charact.getProduct().getPrice(),
-						charact.getProduct().getDate()))
-				.collect(Collectors.toList());
+				.map(charact -> {
+					List<Photo> photos = photoRepository.findPhotosForProductById(charact.getProduct().getProductId());
+					Photo photo = photos.isEmpty()? null :photos.get(0);
+					return new ListProductBasicInfo(charact.getProduct().getProductId(),
+							charact.getProduct().getTitle(), charact.getProduct().getPrice(),
+							charact.getProduct().getDate(),photo);
+			        })
+					.collect(Collectors.toList());
 	}
 
-	/***
-	 * calculate rating for all products based on the reviews
-	 *  
-	 * @throws ResourceDoesntExistException - when there are no products in db
-	 */
-	
 	public void calculateRating() throws ResourceDoesntExistException {
 		List<ListProduct> products = getAllproducts();
 
@@ -352,7 +313,7 @@ public class ProductService {
 
 		for (Product p : products) {
 			ListProductBasicInfo prod = new ListProductBasicInfo(p.getProductId(), p.getTitle(), p.getPrice(),
-					p.getDate());
+					p.getDate(),null);
 			result.add(prod);
 		}
 		return result;
@@ -365,7 +326,7 @@ public class ProductService {
 
 		for (Product p : products) {
 			ListProductBasicInfo prod = new ListProductBasicInfo(p.getProductId(), p.getTitle(), p.getPrice(),
-					p.getDate());
+					p.getDate(),null);
 			result.add(prod);
 		}
 		return result;

@@ -13,7 +13,7 @@ import com.vmzone.demo.models.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 		
 	@Query(value = "SELECT * FROM products p WHERE p.category_id IN :ids and is_deleted = 0", nativeQuery = true)
-	List<Object> getProductsPresentInCategories(@Param("ids") List<Long> categoriesIds);
+	List<Product> getProductsPresentInCategories(@Param("ids") List<Long> categoriesIds);
 	
 	@Query(value = "SELECT * FROM products p WHERE is_deleted = 0 and p.price BETWEEN :min AND :max", nativeQuery = true)
 	public List<Product> searchPrice(@Param("min") double min, @Param("max") double max);
