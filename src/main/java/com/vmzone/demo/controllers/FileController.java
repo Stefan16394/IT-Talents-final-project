@@ -97,10 +97,10 @@ public class FileController {
     @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request, HttpSession session) throws MalformedURLException, ResourceDoesntExistException, BadCredentialsException {
     	if (session.getAttribute("user") == null) {
-			throw new BadCredentialsException("You are not logged in! You should log in first!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");
 		}
 		if(!((User) session.getAttribute("user")).isAdmin()) {
-			throw new BadCredentialsException("You do not have access to this feature!");
+			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You do not have access to this feature!");
 		}
     	
     	// Load file as Resource

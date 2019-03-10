@@ -40,9 +40,5 @@ public class Category {
 		this.name = name;
 		this.parent = parent;
 	}
-//
-//	@OneToMany(mappedBy = "parent")
-//	@JsonIgnoreProperties("parent")
-//	private List<Category> subCategories;
 
 }

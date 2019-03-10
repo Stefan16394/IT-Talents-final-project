@@ -104,15 +104,7 @@ public class ProductController {
 		}
 
 		this.productService.removeCharacteristicForProduct(prodId, charId);
-	}
-
-	
-//	// http://localhost:8080/product/?categoryId=1 Така се тества!
-//	@GetMapping("/product")
-//	public List<ListProductBasicInfo> getAllproductsForCategory(@RequestParam("categoryId") long id) {
-//		return this.productService.getAllproducts(id);
-//	}
-	
+	}	
 
 	@GetMapping("/productsQuantity")
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
