@@ -37,6 +37,12 @@ import com.vmzone.demo.repository.UserRepository;
 import com.vmzone.demo.utils.EmailSender;
 import com.vmzone.demo.utils.PasswordGenerator;
 import com.vmzone.demo.utils.RegexValidator;
+/**
+ * Service layer communicating with user repository and product repository for managing user requests
+ * 
+ * @author Stefan Rangelov and Sabiha Djurina
+ *
+ */
 
 @Service
 public class UserService {
@@ -77,7 +83,17 @@ public class UserService {
 		}
 		return user;
 	}
-
+	
+	/**
+	 * Edit profile of user
+	 * 
+	 * @param id - id of user object stored in db
+	 * @param user - EditProfileDTO user information for editing profile
+	 * @return User - the user with the edited profile
+	 * @throws ResourceDoesntExistException - when the user has been deleted or does not exist in DB
+	 * @throws ResourceAlreadyExistsException - when the edited email already exist in DB and its to another user
+	 */
+	
 	public User editProfile(long id, EditProfileDTO user)
 			throws ResourceDoesntExistException, ResourceAlreadyExistsException {
 		User u = null;
@@ -127,7 +143,16 @@ public class UserService {
 		this.userRepository.save(u);
 	}
 
-	// TODO test it if it works
+	/**
+	 * Send forgotten password to email
+	 * 
+	 * @param email - email to send the forgotten password to
+	 * @throws ResourceDoesntExistException - when the user with this email does not exist in DB
+	 * @throws AddressException
+	 * @throws InvalidEmailException
+	 * @throws MessagingException
+	 * @throws IOException
+	 */
 
 	public void forgottenPassword(String email) throws ResourceDoesntExistException, AddressException,
 			InvalidEmailException, MessagingException, IOException {
@@ -188,9 +213,23 @@ public class UserService {
 		return items;
 	}
 
+	/**
+	 * Add product in users cart
+	 * 
+	 * @param addProduct - dto with information for the product
+	 * @param id - id of product object stored in db
+	 * @return id -  id of product added to cart
+	 * @throws NotEnoughQuantityException - when there is not enough quantity of the added product
+	 * @throws ResourceDoesntExistException - when the product has been deleted or does not exist in db
+	 */
 	
 	public long addProductToCart(CartProductDTO addProduct, long id) throws NotEnoughQuantityException, ResourceDoesntExistException {
-		Product p = this.productRepository.findById(addProduct.getProductId()).get();
+		final Product p;
+		try {
+		    p = this.productRepository.findById(addProduct.getProductId()).get();
+		} catch (NoSuchElementException e) {
+			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product doesn't exist");
+		}
 		if (p.getQuantity() < addProduct.getQuantity()) {
 			throw new NotEnoughQuantityException(HttpStatus.BAD_REQUEST,
 					"There is not enough quantity of this product! Try with less or add it to you cart later.");
@@ -202,6 +241,15 @@ public class UserService {
 		return addProduct.getProductId();
 	}
 	
+	/**
+	 * Edit product in users cart
+	 * 
+	 * @param editProduct - dto with info for editing product in the cart
+	 * @param id - id of product object stored in db
+	 * @return id - id of product object updated in cart
+	 * @throws NotEnoughQuantityException - when there is not enough quantity if the added product
+	 * @throws ResourceDoesntExistException - when the product has been deleted or does not exist in db
+	 */
 
 	public long updateProductInCart(CartProductDTO editProduct, long id) throws NotEnoughQuantityException, ResourceDoesntExistException {
 		final Product p;

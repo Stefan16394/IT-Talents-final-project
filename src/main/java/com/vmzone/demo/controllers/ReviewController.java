@@ -20,6 +20,14 @@ import com.vmzone.demo.models.Review;
 import com.vmzone.demo.service.ReviewService;
 import com.vmzone.demo.utils.SessionManager;
 
+/**
+ * Rest Controller for managing reviews requests
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ * 
+ *
+ */
+
 @RestController
 public class ReviewController {
 	@Autowired

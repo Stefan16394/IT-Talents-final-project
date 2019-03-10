@@ -1,5 +1,11 @@
 package com.vmzone.demo.utils;
 
+/**
+ * Helper class for body of sent emails
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ *
+ */
 public class EmailConstantsHelper {
 	
 	

@@ -34,6 +34,14 @@ import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.FileStorageService;
 import com.vmzone.demo.utils.SessionManager;
 
+/**
+ * Rest Controller for managing file requests
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ * 
+ *
+ */
+
 @RestController
 public class FileController {
 	private static final Logger logger = LoggerFactory.getLogger(FileController.class);

@@ -29,6 +29,13 @@ import com.vmzone.demo.repository.CharacteristicsRepository;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;
 
+/**
+ * Service layer communicating with category repository, product repository, review repository for managing product requests
+ * 
+ * @author Stefan Rangelov and Sabiha Djurina
+ *
+ */
+
 @Service
 public class ProductService {
 	private static final int SMALL_QUANTITY_INDICATOR = 10;
@@ -60,6 +67,16 @@ public class ProductService {
 
 		return this.productRepository.save(newProduct);
 	}
+	
+	/**
+	 * Add characteristic for a product
+	 * 
+	 * @param productId -  id of product object stored in db
+	 * @param characteristic - dto with info for the characteristic
+	 * @return id of the newly added characteristic
+	 * @throws ResourceAlreadyExistsException - when there is a characteristic with that name for this product in db
+	 * @throws ResourceDoesntExistException - when there is no such product in db
+	 */
 
 	public long addCharacteristicForProduct(long productId, AddCharacteristicDTO characteristic)
 			throws ResourceAlreadyExistsException, ResourceDoesntExistException {
@@ -72,7 +89,7 @@ public class ProductService {
 		try {
 			this.productRepository.findById(productId).get();
 		} catch (NoSuchElementException e) {
-			throw new ResourceDoesntExistException("There is no such category");
+			throw new ResourceDoesntExistException("There is no such product");
 		}
 
 		Characteristic newCharacteristic = new Characteristic(this.productRepository.findById(productId).get(),
@@ -104,6 +121,14 @@ public class ProductService {
 				.map(charact -> new AddCharacteristicDTO(charact.getName(), charact.getValue()))
 				.collect(Collectors.toList());
 	}
+	
+	/**
+	 * Get information in dto for a product
+	 * 
+	 * @param id -  id of product object stored in db
+	 * @return - dto with info for the product
+	 * @throws BadCredentialsException - when there is no such product in db or the product has been deleted
+	 */
 
 	public ListProduct getAllInfoForProduct(long id) throws BadCredentialsException {
 		Product p = null;
@@ -169,6 +194,15 @@ public class ProductService {
 		product.setIsDeleted(1);
 		this.productRepository.save(product);
 	}
+	
+	/**
+	 * Edit product
+	 * 
+	 * @param id -  id of product object stored in db
+	 * @param editedProduct - dto eith info for edited product
+	 * @return Product - newely edited product
+	 * @throws ResourceDoesntExistException - when the product or category does not exist in db
+	 */
 
 	public Product editProduct(long id, EditProductDTO editedProduct) throws ResourceDoesntExistException {
 		Product product = null;
@@ -211,6 +245,16 @@ public class ProductService {
 
 				}).collect(Collectors.toList());
 	}
+	
+	/**
+	 * get basic info for filtered products
+	 * 
+	 * @param sortBy - newest, oldest, ascending price, descending price, ascending alphabet, descending alphabet
+	 * @param categoryId -  id of category object stored in db
+	 * @param minPrice - min price for searching
+	 * @param maxPrice - max price for searching
+	 * @return list of dto objects
+	 */
 
 	public List<ListProductBasicInfo> getAllproducts(String sortBy, Long categoryId, Double minPrice, Double maxPrice) {
 		List<ListProductBasicInfo> products = categoryId == null
@@ -269,6 +313,12 @@ public class ProductService {
 				.collect(Collectors.toList());
 	}
 
+	/***
+	 * calculate rating for all products based on the reviews
+	 *  
+	 * @throws ResourceDoesntExistException - when there are no products in db
+	 */
+	
 	public void calculateRating() throws ResourceDoesntExistException {
 		List<ListProduct> products = getAllproducts();
 

@@ -23,6 +23,14 @@ import com.vmzone.demo.models.Favourite;
 import com.vmzone.demo.service.FavouritesService;
 import com.vmzone.demo.utils.SessionManager;
 
+/**
+ * Rest Controller for managing favourites requests
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ * 
+ *
+ */
+
 @RestController
 public class FavouriteController {
 	

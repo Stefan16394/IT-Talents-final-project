@@ -17,6 +17,13 @@ import org.springframework.http.HttpStatus;
 
 import com.vmzone.demo.exceptions.InvalidEmailException;
 
+/**
+ * Class for sending mails for forgotten password, welcome email for registration, sending promotions to subscribed and contact form
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ *
+ */
+
 public class EmailSender {
 	
 	

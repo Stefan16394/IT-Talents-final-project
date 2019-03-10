@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import com.vmzone.demo.exceptions.ResourceDoesntExistException;
 import com.vmzone.demo.models.User;
 
+
 public class SessionManager {
 	
 	private static final String USER = "user";

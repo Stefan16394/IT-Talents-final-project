@@ -19,6 +19,12 @@ import com.vmzone.demo.models.Product;
 import com.vmzone.demo.models.ProductInSale;
 import com.vmzone.demo.repository.ProductInSaleRepository;
 import com.vmzone.demo.repository.ProductRepository;
+/**
+ * Service layer communicating with product repository and product in sale repository for managing requests for products in sale
+ * 
+ * @author Stefan Rangelov and Sabiha Djurina
+ *
+ */
 
 @Service
 public class ProductInSaleService {
@@ -29,7 +35,15 @@ public class ProductInSaleService {
 	@Autowired
 	public ProductRepository productRepository;
 	
-	public ProductInSale addProductInSale(AddProductInSaleDTO sale) throws VMZoneException {
+	/**
+	 * adding existing product in sale
+	 * 
+	 * @param sale - dto object with info for added sale
+	 * @return ProductInSale - newely added sale
+	 * @throws ResourceDoesntExistException - when product is already in sale or does not exist in db
+	 */
+	
+	public ProductInSale addProductInSale(AddProductInSaleDTO sale) throws ResourceDoesntExistException {
 		ProductInSale p = this.productInSaleRepository.getProduct(sale.getProductId(), sale.getStartDate(), sale.getEndDate(), sale.getDiscountPercentage());
 		if(p != null) {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product is already in sale for this dates");

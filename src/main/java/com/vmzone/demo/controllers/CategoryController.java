@@ -24,6 +24,14 @@ import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.CategoryService;
 import com.vmzone.demo.utils.SessionManager;
 
+/**
+ * Rest Controller for managing categories requests
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ * 
+ *
+ */
+
 @RestController
 public class CategoryController {
 

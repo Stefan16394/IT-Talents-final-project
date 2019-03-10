@@ -24,6 +24,13 @@ import com.vmzone.demo.repository.OrderDetailsRepository;
 import com.vmzone.demo.repository.OrderRepository;
 import com.vmzone.demo.repository.ProductRepository;
 
+/**
+ * Service layer communicating with product repository, order repository and order details repository for managing orders requests
+ * 
+ * @author Stefan Rangelov and Sabiha Djurina
+ *
+ */
+
 @Service
 public class OrderService {
 	@Autowired
@@ -38,6 +45,16 @@ public class OrderService {
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * make order for user with products in his shopping cart
+	 * 
+	 * @param user - make order for this user with his products in shopping cart
+	 * @return Order - the newly added order
+	 * @throws ResourceDoesntExistException -  when the users shopping cart is empty
+	 * @throws BadRequestException - when the transaction failed
+	 * @throws NotEnoughQuantityException - when there is not enough quantity of some product in shopping cart
+	 */
+	
 	@Transactional(rollbackOn = Exception.class)
 	public Order createNewOrder(User user) throws ResourceDoesntExistException, BadRequestException, NotEnoughQuantityException {
 		List<ShoppingCartItem> items = this.userService.getShoppingCart(user.getUserId());

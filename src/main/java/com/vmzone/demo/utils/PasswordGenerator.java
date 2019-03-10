@@ -1,5 +1,12 @@
 package com.vmzone.demo.utils;
 
+/**
+ * Class for generating new password for forgotten password functionality
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ *
+ */
+
 public class PasswordGenerator {
 	
 	private static final String UPPER_CASES = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -16,6 +16,12 @@ import com.vmzone.demo.repository.FavouritesRepository;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.UserRepository;
 
+/**
+ * Service layer communicating with favourites repository for managing favourites requests
+ * 
+ * @author Stefan Rangelov and Sabiha Djurina
+ *
+ */
 @Service
 public class FavouritesService {
 	
@@ -40,6 +46,14 @@ public class FavouritesService {
 			throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Product or user doesnt exist.");
 		}
 	}
+	
+	/**
+	 * remove favourite product for user
+	 * 
+	 * @param id - id of product object stored in db
+	 * @param userId - id of user objest stored in db
+	 * @throws ResourceDoesntExistException - when the favourite does not exist in db or has been deleted
+	 */
 	
 	public void removeFavouriteById(long id, long userId) throws ResourceDoesntExistException {
 		

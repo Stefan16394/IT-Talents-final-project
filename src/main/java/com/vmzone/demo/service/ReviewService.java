@@ -18,6 +18,12 @@ import com.vmzone.demo.models.User;
 import com.vmzone.demo.repository.ProductRepository;
 import com.vmzone.demo.repository.ReviewRepository;
 import com.vmzone.demo.repository.UserRepository;
+/**
+ * Service layer communicating with review repository and user repository for managing review requests
+ * 
+ * @author Stefan Rangelov and Sabiha Djurina
+ *
+ */
 
 @Service
 public class ReviewService {
@@ -51,6 +57,16 @@ public class ReviewService {
 		review.setIsDeleted(1);
 		this.reviewRepository.save(review);
 	}
+	
+	/**
+	 * Edit review of user
+	 * 
+	 * @param id - id of review object stored in db
+	 * @param editedReview - dto with info for edited review
+	 * @param userId - id of user object stored in db
+	 * @return Review - newly edited review
+	 * @throws ResourceDoesntExistException - when review ddoes not exist in db or is not the users review to edit
+	 */
 
 	public Review editReview(long id, EditReviewDTO editedReview, long userId) throws ResourceDoesntExistException {
 		Review review = this.reviewRepository.findReviewForUser(userId, id);
@@ -78,13 +94,18 @@ public class ReviewService {
 				.map(review -> new ListReview(review.getReviewId(), review.getReview(), review.getRating()))
 				.collect(Collectors.toList());
 	}
-	
+	/**
+	 * Calculate rating for a product
+	 * 
+	 * @param id - id of product object stored in db
+	 * @throws ResourceDoesntExistException - when the product does not exist in db
+	 */
 	private void calculateRating(long id) throws ResourceDoesntExistException {
 		Product p = null;	
 		try {
 				p = this.productRepository.findById(id).get();
 			} catch (NoSuchElementException e) {
-				throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Invalid product or user");
+				throw new ResourceDoesntExistException(HttpStatus.NOT_FOUND, "Invalid product");
 			}
 		
 			List<ListReview> reviews = getReviewsForProduct(p.getProductId());

@@ -44,6 +44,14 @@ import com.vmzone.demo.models.User;
 import com.vmzone.demo.service.UserService;
 import com.vmzone.demo.utils.SessionManager;
 
+/**
+ * Rest Controller for managing users requests
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ * 
+ *
+ */
+
 @RestController
 public class UserController {
 	@Autowired

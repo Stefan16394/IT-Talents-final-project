@@ -23,6 +23,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+/**
+ * Service layer communicating with product repository and photo repository for managing uploading and downloading a file
+ * 
+ * @author Stefan Rangelov and Sabiha Djurina
+ *
+ */
+
 @Service
 public class FileStorageService {
 	
@@ -45,7 +52,14 @@ public class FileStorageService {
             throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
         }
     }
-
+    /**
+     * store  file in uploads folder and file name in db
+     * 
+     * @param file - added MultipartFile 
+     * @param id - id of product object stored in db
+     * @return String - path of the product
+     */
+    
     public String storeFile(MultipartFile file, Long id) {
     	UUID uuid = UUID.randomUUID();
         // Normalize file name

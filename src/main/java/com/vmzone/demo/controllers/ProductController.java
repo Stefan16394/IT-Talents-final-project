@@ -36,6 +36,14 @@ import com.vmzone.demo.service.ProductInSaleService;
 import com.vmzone.demo.service.ProductService;
 import com.vmzone.demo.utils.SessionManager;
 
+/**
+ * Rest Controller for managing products requests
+ * 
+ * @author Sabiha Djurina and Stefan Rangelov
+ * 
+ *
+ */
+
 @RestController
 public class ProductController {
 	
@@ -128,18 +136,18 @@ public class ProductController {
 	public List<ListReview> getReviewsForAProduct(@PathVariable long id) {
 		return this.productService.getReviewsForProduct(id);
 	}
-	//TODO not working for products without reviews
+
 	@GetMapping("/products")
 	public List<ListProduct> getAllproducts() {
 		return this.productService.getAllproducts();
 	}
 	
-	//TODO not working for products without reviews
+	
 	@GetMapping("/info/{id}")
 	public ListProduct getAllInfoForProduct(@PathVariable long id) throws BadCredentialsException {
 		return this.productService.getAllInfoForProduct(id);
 	}
-	//TODO needs to be done properly
+	
 		@GetMapping("/productsSort")
 		public List<ListProductBasicInfo> getAllproducts(
 				@RequestParam(name="sortBy", required=false) String sortBy,
@@ -149,7 +157,6 @@ public class ProductController {
 			return this.productService.getAllproducts(sortBy, categoryId,min,max);
 		}
 		
-	//TODO must be a thread
 	@PostMapping("/calculate")
 	public void calculateRating(HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {

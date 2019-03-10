@@ -15,6 +15,13 @@ import com.vmzone.demo.exceptions.ResourceAlreadyExistsException;
 import com.vmzone.demo.models.Category;
 import com.vmzone.demo.repository.CategoryRepository;
 
+/**
+ * Service layer communicating with category repository for managing categories requests
+ * 
+ * @author Stefan Rangelov and Sabiha Djurina
+ *
+ */
+
 @Service
 public class CategoryService {
 	
@@ -50,6 +57,13 @@ public class CategoryService {
 				.map(subCat -> new ListSubCategory(subCat.getCategoryId(), subCat.getName()))
 				.collect(Collectors.toList());
 	}
+
+	/**
+	 * get all subcategories for a category
+	 * 
+	 * @param id - id of category object stored in db
+	 * @return list of dto objects
+	 */
 	
 	public List<ListFinalSubCategories> getLeafCategories(long id){
 
