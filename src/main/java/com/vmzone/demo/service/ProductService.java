@@ -154,7 +154,11 @@ public class ProductService {
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
 		return this.productRepository.getAllProductsWithSmallQuantity(SMALL_QUANTITY_INDICATOR).stream()
 				.filter(prod -> prod.getIsDeleted() == 0)
-				.map(product -> new ListProductBasicInfo(product.getTitle(), product.getPrice()))
+				.map(product -> {
+					List<Photo> photos = photoRepository.findPhotosForProductById(product.getProductId());	
+					Photo photo = photos.isEmpty() ? null : photos.get(0);
+				    return new ListProductBasicInfo(product.getProductId(), product.getTitle(), product.getPrice(), product.getDate(), photo);
+				})
 				.collect(Collectors.toList());
 	}
 

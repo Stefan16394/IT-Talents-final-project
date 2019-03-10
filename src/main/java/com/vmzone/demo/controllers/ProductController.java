@@ -91,10 +91,9 @@ public class ProductController {
 
 		return this.productService.addCharacteristicForProduct(productId, characteristic);
 	}
-
-	@PostMapping("/product/remove/characteristic/{prodId}/{charId}")
-	public void removeCharacteristicForProduct(@PathVariable("prodId") Long prodId, @PathVariable("charId") Long charId,
-			HttpSession session)
+	
+	@PostMapping("/product/remove/characteristic")
+	public void removeCharacteristicForProduct(@RequestParam("productId") Long prodId, @RequestParam("characteristicId") Long charId , HttpSession session ) 
 			throws ResourceDoesntExistException, BadCredentialsException, ResourceAlreadyExistsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED,
@@ -107,13 +106,14 @@ public class ProductController {
 		this.productService.removeCharacteristicForProduct(prodId, charId);
 	}
 
-//	 http://localhost:8080/product/?categoryId=1 Така се тества!
+	
+//	// http://localhost:8080/product/?categoryId=1 Така се тества!
 //	@GetMapping("/product")
 //	public List<ListProductBasicInfo> getAllproductsForCategory(@RequestParam("categoryId") long id) {
 //		return this.productService.getAllproducts(id);
 //	}
+	
 
-	// TODO fix dto
 	@GetMapping("/productsQuantity")
 	public List<ListProductBasicInfo> getAllProductsWithSmallQuantity() {
 		return this.productService.getAllProductsWithSmallQuantity();
