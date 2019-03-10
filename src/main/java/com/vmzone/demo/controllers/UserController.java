@@ -110,7 +110,7 @@ public class UserController {
 		this.userService.forgottenPassword(pass.getEmail());
 	}
 	
-	//TODO threads
+	//done with threads
 	@PostMapping("/sendSubscribed")
 	public void sendSubcribed(HttpSession session) throws AddressException, ResourceDoesntExistException, InvalidEmailException, MessagingException, IOException, BadCredentialsException {
 		

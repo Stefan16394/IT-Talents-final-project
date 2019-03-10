@@ -48,8 +48,8 @@ public class ReviewController {
 		}
 		 this.reviewService.removeReviewById(id, SessionManager.getLoggedUserId(session));
 	}
-	
-	@GetMapping("review/edit/{id}")
+	//not used in requests
+	@GetMapping("review/{id}")
 	public Review getReviewById(@PathVariable long id, HttpSession session) throws ResourceDoesntExistException, BadCredentialsException {
 		if (!SessionManager.isUserLoggedIn(session)) {
 			throw new BadCredentialsException(HttpStatus.UNAUTHORIZED, "You are not logged in! You should log in first!");

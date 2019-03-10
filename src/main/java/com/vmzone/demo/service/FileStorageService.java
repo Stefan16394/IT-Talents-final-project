@@ -64,13 +64,9 @@ public class FileStorageService {
     	UUID uuid = UUID.randomUUID();
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        System.out.println("filename: " + fileName);
         String fileNameWithoutExtension = FilenameUtils.getBaseName(fileName);
         String fileExtension = FilenameUtils.getExtension(fileName);
         String path = fileNameWithoutExtension + uuid.toString() + "." +fileExtension;
-        
-        
-        System.out.println("path" + path);
         
 
         try {
